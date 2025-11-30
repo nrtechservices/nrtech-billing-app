@@ -1,0 +1,4653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>N'RTECH INTERNET — BILLING SYSTEM</title>
+<style>
+  /* ---- Modern Mobile-App Inspired Light Theme (WARM AMBER / GOLD) ---- */
+  :root {
+    --accent: #d49a37; /* WARM GOLDEN-ORANGE (Softer, but visible on light) */
+    --accent-2: #B87333; /* Darker Gold for contrast */
+    --bg: #f9f9f9; /* Near-White/Light Gray Background (Original) */
+    --card: #ffffff; /* White Panel Background */
+    --panel-2: #e0e0e0; /* Used for Borders */
+    --text: #1a1a1a; /* Dark text */
+    --muted: #6b7280; /* Muted gray for secondary text */
+
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --border: var(--panel-2);
+    --header-bg-start: var(--card);
+    --header-bg-end: var(--accent);
+    --glow: 0 0 10px rgba(212, 154, 55, 0.5), 0 0 5px rgba(184, 115, 51, 0.3);
+    --modal-bg: #ffffff; /* White card for modals */
+
+    /* Custom styles for attractiveness */
+    --input-focus-shadow: 0 0 0 3px rgba(212, 154, 55, 0.3);
+
+    /* TOAST Colors */
+    --toast-success: #4CAF50;
+    --toast-error: #F44336;
+    --toast-warning: #FFC107;
+    --toast-info: #2196F3;
+  }
+  *{box-sizing:border-box}
+  body{
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin:0;
+      /* CHANGE 1: Smooth Golden Gradient Background */
+      background: linear-gradient(135deg, var(--card) 0%, #f0e6d6 100%);
+      color:var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-y: auto; /* Ensure body scrolls */
+      /* ADJUSTED: Space for the new fixed nav */
+      padding-bottom: 70px; /* Space for new mobile nav */
+  }
+
+  /* Mobile-Inspired Container: Padding matches app screens */
+  .container{max-width:900px;margin:0 auto;padding:16px 20px; flex-grow: 1; width: 100%;}
+
+  /* Fixed Header for App Feel */
+  header{
+    display:flex;justify-content:space-between;align-items:center;padding:14px 20px;
+    background:var(--card); /* Light Header Background */
+    color:var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 3px solid var(--accent); /* Accent border */
+    /* Min height to prevent layout shift */
+    min-height: 57px; 
+  }
+  h1{margin:0;font-size:16px;line-height:1.2; color: var(--accent-2); text-shadow: none;}
+  .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:var(--shadow);margin-top:16px; border: 1px solid var(--border);}
+  .row{display:flex;gap:8px;align-items:center}
+  h3 { color: var(--accent-2); margin-top: 0; }
+
+  /* Buttons with GLOW Effect - IMPROVED CENTERING */
+  button{
+    background:var(--accent);color:white;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;
+    transition:background 0.2s, transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 0 8px rgba(212, 154, 55, 0.4);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  button:hover{
+    background:var(--accent-2);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(212, 154, 55, 0.5), 0 4px 10px rgba(0,0,0,0.1);
+  }
+  button.ghost{
+    background:transparent;color:var(--accent);border:1px solid var(--accent);opacity:0.9;
+    box-shadow: none;
+  }
+  button.ghost:hover{
+    background:rgba(212, 154, 55, 0.1);opacity:1;
+    transform: translateY(0);
+    box-shadow: 0 0 8px rgba(212, 154, 55, 0.4);
+  }
+  button.small{padding:6px 8px;font-size:12px}
+
+  input,select,textarea{
+    padding:10px;border-radius:8px;border:1px solid var(--border);width:100%;font-size:14px;
+    background:var(--bg);color:var(--text);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: var(--input-focus-shadow);
+  }
+
+  /* Table Design: Minimal and Clean */
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}
+  th{color:var(--muted);font-weight:600; background: var(--card); position: sticky; top: 0; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: rgba(212, 154, 55, 0.05); }
+
+  .muted{color:var(--muted);font-size:13px}
+  .badge{background:var(--accent);color:white;padding:4px 8px;border-radius:999px;font-weight:700; font-size: 12px;}
+  .flex-between{display:flex;justify-content:space-between;align-items:center}
+
+  /* 4. MODAL: Beautiful & Attractable Style */
+  .modal-backdrop{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.5); /* Semi-transparent backdrop */
+    z-index:100;padding:20px;
+    backdrop-filter: blur(5px);
+  }
+  .modal{
+    background:var(--modal-bg);
+    color:var(--text);
+    width:min(95%, 480px);
+    max-height:92vh;overflow-y:auto;
+    border-radius:16px;padding:25px;
+    box-shadow:0 0 30px rgba(212, 154, 55, 0.2), var(--shadow);
+    border: 2px solid var(--accent);
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Specific override for wide modals */
+  #modalAccountManagerBackdrop .modal, #modalLiquidationBackdrop .modal, #modalPaymentLogsBackdrop .modal {
+      width: min(95%, 900px);
+      max-width: 900px;
+  }
+  /* Fix for Account Manager table container scrolling */
+  #modalAccountManagerBackdrop .card:last-child {
+      max-height: calc(92vh - 200px);
+      overflow-y: auto;
+  }
+  .col-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  .header-brand { display: flex; align-items: center; gap: 10px; justify-content: center; flex-grow: 1; }
+  .header-content { display: flex; align-items: center; width: 100%; justify-content: space-between; }
+
+  /* CHANGE 3: Slightly Bigger Logo */
+  .logo-img {
+    height: 50px; /* Increased from 40px */
+    filter: drop-shadow(0 0 5px rgba(212, 154, 55, 0.5));
+    background: transparent;
+  }
+
+  /* Account Status Colors (Adjusted for light theme) */
+  .status-terminated { color: #cc0000; font-weight: 700; text-shadow: 0 0 3px rgba(204, 0, 0, 0.3); }
+  .status-penalty { color: #ff8c00; font-weight: 700; text-shadow: 0 0 3px rgba(255, 140, 0, 0.3); }
+  .status-active, .status-suspended { color: var(--accent-2); font-weight: 700; text-shadow: 0 0 3px rgba(184, 115, 51, 0.3);}
+
+  /* Old Main Button Layout (Removed) */
+  .main-buttons-container { display: none; }
+
+  /* 5. Account Manager - Separate Boxes Style (Updated for smooth look) */
+  #accountsTbody .account-box-row {
+      display: block;
+      padding: 12px; /* Increased padding */
+      margin-bottom: 10px; /* Added margin */
+      border-radius: 10px;
+      background: var(--card);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Smoother shadow */
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+  }
+  #accountsTbody .account-box-row:hover {
+      background: rgba(212, 154, 55, 0.1); /* Light hover effect */
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(212, 154, 55, 0.2);
+  }
+  .account-info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+  }
+  .account-info-grid > div:nth-child(4) { text-align: right; } /* Status */
+  .account-info-grid > div:nth-child(5) { text-align: center; } /* Points */
+  .account-info-grid .muted-label { color: var(--muted); font-size: 11px; display: block; }
+  .account-info-grid .account-name { font-weight: 600; color: var(--text); }
+  .account-info-grid .plan-fee { color: var(--accent-2); }
+
+  /* Scrollable Account Container */
+  .scrollable-accounts-container {
+      max-height: 500px;
+      overflow-y: auto;
+      padding: 1px;
+  }
+  .account-manager-header {
+      display: none;
+  }
+  /* Show headers on very wide screens for better data comparison */
+  @media (min-width: 1024px) {
+      .account-manager-header { display: table-header-group; }
+      .account-info-grid { display: table-row; }
+      .account-info-grid > div { display: table-cell; padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+      .account-info-grid .muted-label { display: none; }
+      #modalAccountManagerBackdrop .card:last-child { max-height: calc(92vh - 250px); }
+  }
+
+  /* Responsive/Mobile adjustments */
+  @media (max-width:600px){
+    .container { padding: 16px; }
+    header { padding: 14px 16px; }
+    .col-2{grid-template-columns:1fr}
+    .modal{width:95%}
+    .card .row { flex-wrap: wrap; justify-content: center; }
+    #search { width: 100% !important; margin-bottom: 8px; }
+    .account-info-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .account-info-grid > div:nth-child(4), .account-info-grid > div:nth-child(5) { text-align: left; }
+  }
+
+  /* Widescreen/Tablet Adjustments */
+  @media (min-width: 601px) {
+    .container { max-width: 900px; padding: 20px 30px; }
+    header { justify-content: space-around; }
+    .header-content { width: auto; }
+  }
+
+  /* Fix for header content wrapping on smaller screens */
+  @media (max-width: 768px) {
+    header { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .header-brand { justify-content: center; width: 100%; }
+  }
+
+
+  /* FOOTER REMOVED */
+  footer{ display: none; }
+  .no-print{display:inline-block}
+
+  /* LOGIN MODAL SPECIFIC STYLES */
+  #loginModalBackdrop {
+    /* CHANGE 1: Use the new background for consistency */
+    background: linear-gradient(135deg, var(--card) 0%, #f0e6d6 100%);
+  }
+  #loginModalBackdrop .modal {
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 40px rgba(212, 154, 55, 0.4);
+    animation: bounceIn 0.5s ease-out;
+  }
+  @keyframes bounceIn {
+      from { opacity: 0; transform: scale(0.8) translateY(-50px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .hidden { display: none !important; }
+
+  /* CHANGE 3: Calendar Grid Styles */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px; /* Gap for subtle borders */
+    background-color: var(--panel-2); /* Border color */
+    border: 1px solid var(--panel-2);
+    border-radius: 8px;
+    overflow: hidden; /* Contains the internal borders */
+  }
+  .cal-day {
+    background-color: var(--card); /* White day background */
+    padding: 8px 4px;
+    min-height: 80px;
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cal-day .date {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+  .payment-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 3px;
+  }
+
+  /* NEW: Toast Notification Container */
+  #toastContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* NEW: Toast Notification Style */
+  .toast {
+    background-color: var(--card);
+    color: var(--text);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    max-width: 300px;
+    transition: opacity 0.3s, transform 0.3s;
+    animation: slideIn 0.5s ease-out;
+    border-left: 5px solid;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .toast.success { border-left-color: var(--toast-success); }
+  .toast.error { border-left-color: var(--toast-error); }
+  .toast.warning { border-left-color: var(--toast-warning); }
+  .toast.info { border-left-color: var(--toast-info); } /* Added for confirmation */
+
+  @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+  }
+  .toast.fade-out {
+      opacity: 0;
+      transform: translateX(100%);
+  }
+
+  /* NEW: Marquee *HEADER* Style */
+  #marqueeHeader {
+      background: var(--card);
+      border-bottom: 1px solid var(--accent);
+      padding: 5px 0;
+      z-index: 49; /* Below header */
+      position: sticky;
+      top: 60px; /* Adjust this to match header height */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  #marqueeHeader marquee {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 700;
+      color: var(--accent-2) !important;
+      font-size: 14px;
+      line-height: 1.2;
+      padding: 2px 0;
+  }
+  /* Adjust sticky top position based on header wrap */
+  @media (max-width: 768px) {
+      #marqueeHeader { top: 10px; } /* header height + gap */
+  }
+
+
+  .clock-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-actions {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      /* Ensure actions are visible */
+      margin-left: 10px;
+  }
+  .header-actions button {
+      padding: 6px 10px;
+  }
+  
+  /* FIX: Remove header clock, use fixed footer clock instead */
+  .header-content .clock-container { display: none; }
+  
+  /* NEW: Fixed Mobile Navigation Bar */
+  #fixedNavFooter {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      z-index: 90;
+      padding: 5px 0 8px 0;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+  }
+  
+  #fixedNavFooter button {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      flex-grow: 1;
+      gap: 2px;
+  }
+  #fixedNavFooter button span {
+      font-size: 20px; /* Icon size */
+  }
+  #fixedNavFooter button:hover {
+      color: var(--accent-2);
+      background: transparent;
+      transform: none;
+      box-shadow: none;
+  }
+  #fixedNavFooter button.active {
+      color: var(--accent);
+  }
+
+
+  /* OLD Fixed Footer Marquee (REMOVED) */
+  #fixedClockFooter { display: none; }
+
+  /* --- Custom Confirmation Modal Styles --- */
+    #confirmationModalBackdrop {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.4);
+        z-index: 1000; /* Above all */
+        backdrop-filter: blur(3px);
+    }
+    #confirmationModal {
+        background: var(--modal-bg);
+        width: min(90%, 350px);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        border: 2px solid var(--toast-warning);
+        animation: fadeIn 0.3s ease-out;
+    }
+    #confirmationModal h4 {
+        margin-top: 0;
+        color: var(--toast-warning);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    #confirmationModal p {
+        margin-bottom: 20px;
+    }
+    #confirmationModal .confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    /* --- NEW: Notification Popup --- */
+    #notificationPopup {
+        display: none;
+        position: fixed; /* Fixed position */
+        top: 65px; /* Below header */
+        right: 20px;
+        width: 320px;
+        max-height: 400px;
+        overflow-y: auto;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border-radius: 8px;
+        z-index: 200;
+        border: 1px solid var(--border);
+        animation: fadeIn 0.2s ease-out;
+    }
+    #notificationList {
+        display: flex;
+        flex-direction: column;
+    }
+    .notif-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .notif-item:hover {
+        background: rgba(212, 154, 55, 0.05);
+    }
+    .notif-item:last-child {
+        border-bottom: none;
+    }
+    .notif-item.unread {
+        font-weight: 700;
+        background: rgba(212, 154, 55, 0.02);
+    }
+    .notif-item .notif-type {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 3px;
+    }
+    .notif-item .notif-type-due { color: var(--accent-2); }
+    .notif-item .notif-type-penalty { color: var(--toast-warning); }
+    .notif-item .notif-type-terminated { color: var(--toast-error); }
+    #notificationBadge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        padding: 2px 5px;
+        font-size: 9px;
+        background: var(--toast-error);
+        border-radius: 99px;
+        border: 1px solid white;
+        display: none; /* Shown by JS */
+    }
+
+    /* --- NEW: Dashboard Modal --- */
+    #modalDashboardBackdrop .modal {
+        width: min(95%, 400px);
+    }
+    .dashboard-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 15px;
+    }
+    .dashboard-buttons button {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 16px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-weight: 700;
+    }
+    
+    /* --- NEW: Plan Cards & Plan Manager Styles --- */
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+.plan-card {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.plan-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+.plan-card.selected {
+    border-color: var(--accent);
+    background: rgba(212, 154, 55, 0.1);
+    box-shadow: 0 0 10px rgba(212, 154, 55, 0.3);
+}
+.plan-card h4 { margin: 5px 0; color: var(--accent-2); font-size: 14px; }
+.plan-card .price { font-weight: 700; font-size: 16px; color: var(--text); }
+.plan-card .speed { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.plan-card .install-fee { font-size: 10px; color: var(--toast-warning); font-weight: 600; border-top: 1px dashed var(--border); padding-top: 4px; margin-top: 4px;}
+.plan-check {
+    position: absolute; top: 5px; right: 5px; color: var(--accent); display: none;
+}
+.plan-card.selected .plan-check { display: block; }
+
+/* Plan Manager Table in Settings */
+.settings-plan-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; background: var(--bg); border: 1px solid var(--border);
+    margin-bottom: 5px; border-radius: 6px;
+}
+
+/* Fast.com Container */
+.speed-test-container {
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+
+}
+.speed-test-header {
+    background: var(--card);
+    padding: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+/* --- CALCULATOR STYLES --- */
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+.calc-btn {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.calc-btn:hover { background: var(--panel-2); }
+.calc-btn.accent { background: var(--accent); color: white; border: none; }
+.calc-btn.accent:hover { background: var(--accent-2); }
+.calc-display {
+    width: 100%;
+    background: #222;
+    color: #0f0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    text-align: right;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    margin-bottom: 5px;
+}
+
+
+/* --- MODERN GOLD INVOICE DESIGN --- */
+.invoice-modern {
+    width: 100%;
+    max-width: 500px; /* Wider than thermal for better PNG quality */
+    background: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #e0e0e0;
+}
+
+.inv-header {
+    background: linear-gradient(135deg, #b87333 0%, #d49a37 100%);
+    padding: 25px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inv-brand h2 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+.inv-brand div { font-size: 12px; opacity: 0.9; }
+
+.inv-body { padding: 25px; }
+
+.inv-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.inv-table th { text-align: left; color: #b87333; border-bottom: 2px solid #eee; padding: 8px 0; font-size: 12px; text-transform: uppercase; }
+.inv-table td { padding: 10px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+.inv-table td.amount { text-align: right; font-weight: 600; }
+
+.inv-total-section {
+    background: #fdf8f0;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #faeacc;
+}
+
+.inv-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
+.inv-row.grand-total { 
+    font-size: 18px; 
+    font-weight: 700; 
+    color: #b87333; 
+    margin-top: 10px; 
+    padding-top: 10px; 
+    border-top: 1px dashed #d49a37; 
+}
+
+.inv-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 11px;
+    color: #888;
+}
+
+/* --- NEW CLEAN GOLD INVOICE DESIGN (MATCHING REFERENCE) --- */
+.invoice-clean {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1a1a1a;
+    padding: 25px;
+  /* FIX: This ensures the border grows with content */
+    border: 2px dashed #d49a37; 
+    box-sizing: border-box; /* Includes padding in width calculation */
+    height: auto;           /* Allows height to grow */
+    min-height: fit-content; /* Ensures it fits all children */
+    display: flex;          /* Uses flexbox to organize vertical layout */
+    flex-direction: column; /* Stacks items vertically */
+    
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden; /* Prevents anything from spilling out */
+}
+
+/* Header Section */
+.inv-header-clean {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Aligns logo to top */
+    margin-bottom: 20px;
+}
+.inv-brand-col {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* CHANGED: Made logo bigger */
+.inv-brand-col img { 
+    height: 90px;  /* Increased from 45px */
+    width: auto;   /* Maintains aspect ratio */
+}
+
+.inv-meta-col {
+    text-align: right;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #000;
+}
+.inv-meta-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+/* Account Info Box (Dashed) */
+.inv-info-box {
+    border: 1px dashed #d49a37;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 15px;
+    background: #fff;
+}
+.inv-col { width: 48%; }
+.inv-row-item { margin-bottom: 4px; }
+.inv-label { font-weight: 700; color: #000; }
+
+/* Points Summary Bar (Solid Beige) */
+.inv-points-bar {
+    background: #fff8e1;
+    border: 1px solid #faeacc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 25px;
+    border-left: 4px solid #d49a37;
+}
+
+/* Details Table */
+.inv-clean-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+.inv-clean-table th {
+    text-align: left;
+    font-weight: 700;
+    padding: 8px 0;
+    border-bottom: 3px solid #d49a37; /* Thick Gold Divider */
+    font-size: 14px;
+    color: #000;
+}
+.inv-clean-table th:last-child { text-align: right; }
+.inv-clean-table td {
+    padding: 12px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+}
+.inv-clean-table td.amount { text-align: right; }
+
+.inv-total-row td {
+    font-weight: 800;
+    font-size: 18px;
+    border-bottom: none;
+    padding-top: 15px;
+    color: #000;
+}
+
+/* PAID STAMP EFFECT */
+.paid-stamp {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    border: 3px solid #d49a37; /* Gold Border */
+    color: #d49a37;
+    font-size: 30px;
+    font-weight: 900;
+    padding: 5px 20px;
+    text-transform: uppercase;
+    opacity: 0.5;
+    letter-spacing: 4px;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 10px;
+    text-align: center;
+    background: rgba(255,255,255,0.7);
+}
+.stamp-date {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0;
+    font-weight: 700;
+    margin-top: -5px;
+}
+
+/* --- UPDATED FOOTER --- */
+.inv-footer-clean {
+    margin-top: 20px; 
+    border-top: 1px dashed #d49a37; 
+    padding-top: 15px; 
+    text-align: center;
+    /* FIX: Ensures the footer sits inside the flow */
+    position: relative; 
+    width: 100%;
+}
+
+/* --- UPDATED QR CODE --- */
+.inv-qr {
+    width: 100px; 
+    height: auto; 
+    /* FIX: Keeps aspect ratio and prevents stretching */
+    aspect-ratio: 1 / 1; 
+    object-fit: contain; 
+    
+    border: 2px solid #d49a37;
+    padding: 4px;
+    margin-bottom: 8px;
+    background: white; 
+    
+    /* FIX: Centering logic */
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* --- NEW STYLES FOR TRANSACTION ROWS --- */
+.txn-row {
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    transition: all 0.2s;
+}
+.txn-row:hover { transform: scale(1.01); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+/* Green Box for Payments/Discounts */
+.txn-positive {
+    border-left: 5px solid var(--toast-success);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+/* Red Box for Charges/Penalties */
+.txn-negative {
+    border-left: 5px solid var(--toast-error);
+    background: rgba(244, 67, 54, 0.05);
+}
+
+/* Specific text colors */
+.text-danger { color: #d32f2f; font-weight: 700; }
+.text-success { color: #2e7d32; font-weight: 700; }
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+</head>
+<body>
+
+<div id="toastContainer"></div>
+
+<div id="notificationPopup">
+    <div style="padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 1;">
+        <h4 style="margin:0; color: var(--accent-2);">Notifications</h4>
+        <button id="notifMarkAsRead" class="small ghost no-print" style="font-size: 10px; padding: 4px 6px;">Mark all as read</button>
+    </div>
+    <div id="notificationList">
+        <div style="padding: 20px; text-align: center;" class="muted">No new notifications.</div>
+    </div>
+</div>
+
+
+<div class="modal-backdrop" id="confirmationModalBackdrop">
+    <div class="modal" id="confirmationModal">
+        <h4 id="confirmationTitle">⚠️ Confirmation Required</h4>
+        <p id="confirmationMessage">Are you sure you want to proceed with this action?</p>
+        <div class="confirm-actions">
+            <button id="btnConfirmCancel" class="ghost no-print">Cancel</button>
+            <button id="btnConfirmOK">Proceed</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="loginModalBackdrop" style="display:flex;">
+  <div class="modal" id="loginModal">
+    <div style="text-align:center; margin-bottom: 20px;">
+        <img src="logo.png" alt="N'RTECH Logo" class="logo-img" style="height: 50px; margin-bottom: 10px;">
+        <h2 style="margin:0; color: var(--accent-2);">N'RTECH Billing Portal Login</h2>
+        </div>
+    <div id="loginForm">
+        <label class="muted">Username</label>
+        <input id="loginUsername" type="text" />
+        <label style="margin-top:8px" class="muted">Password</label>
+        <div style="position: relative; display: flex; align-items: center;">
+            <input id="loginPassword" type="password" style="padding-right: 50px;" />
+            <button id="toggleLoginPass" class="small ghost" type="button" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); border: none; color: var(--muted); padding: 5px;">Show</button>
+        </div>
+        <div style="text-align:right;margin-top:16px">
+            <button id="btnLogin">Log In</button>
+        </div>
+        <div style="text-align:center; margin-top: 15px; font-size: 12px; display: flex; justify-content: space-between;">
+            <a href="#" id="forgotPasswordLink" style="color: var(--accent-2);">Forgot Password?</a>
+            <a href="#" id="clientRegisterLink" style="color: var(--accent);">New Client? Register</a>
+        </div>
+        <div style="text-align:center; margin-top: 10px;">
+            <button id="btnToggleLoginMode" class="ghost no-print" style="width: 100%; margin-top: 10px;">Switch to Client Login</button>
+        </div>
+    </div>
+    <div id="forgotPasswordForm" style="display:none;">
+        <h4 style="color: var(--accent-2); margin-top: 0;">Password Reset</h4>
+        <label class="muted">Full Name</label>
+        <input id="resetFullName" type="text" placeholder="Enter Administrator Full Name" />
+        <label style="margin-top:8px" class="muted">Secret Code</label>
+        <input id="resetSecretCode" type="text" placeholder="Enter Administrator Secret Code" />
+        <div style="text-align:right;margin-top:16px">
+            <button id="btnResetPassword">Reset</button>
+            <button id="btnCancelReset" class="ghost no-print">Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+<header class="hidden" id="mainHeader">
+  <div class="header-content">
+    <div class="header-brand">
+      <img src="logo.png" alt="N'RTECH Logo" class="logo-img">
+      <h1>N'RTECH BILLING SYSTEM</h1>
+    </div>
+    <div class="header-actions">
+        <button id="btnNotifications" class="no-print small ghost" style="position: relative; font-size: 16px; padding: 6px 10px;">
+            &#128276; <span id="notificationBadge" class="badge">0</span>
+        </button>
+    </div>
+  </div>
+</header>
+
+<div id="marqueeHeader" class="hidden">
+    <marquee direction="left" scrollamount="4" behavior="scroll" id="liveClock">N'RTECH INTERNET — --</marquee>
+</div>
+
+
+<div class="container hidden" id="mainContainer">
+
+  <div class="card" style="margin-top: 20px;">
+    <h3>📈 Payment Analysis (Last 6 Months)</h3>
+    <div id="paymentChartContainer" style="max-height: 400px; padding: 15px;">
+        <canvas id="paymentChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 20px;">
+    <h3>📊 Client Payment Tally (Gross Paid)</h3>
+    <div style="overflow-x: auto; max-height: 300px;">
+        <table class="tally-table">
+            <thead><tr><th>Rank</th><th>Account #</th><th>Customer Name</th><th style="text-align:right;">Total Paid</th></tr></thead>
+            <tbody id="clientTallyTbody"></tbody>
+        </table>
+    </div>
+  </div>
+
+  </div>
+
+<nav id="fixedNavFooter" class="hidden">
+    <button id="navBtnAccounts">
+        <span>&#128100;</span> <div>Accounts</div>
+    </button>
+    <button id="navBtnDashboard">
+        <span>&#128202;</span> <div>Dashboard</div>
+    </button>
+    <button id="navBtnSettings">
+        <span>&#9881;</span> <div>Settings</div>
+    </button>
+</nav>
+
+<nav id="fixedNavFooter" class="hidden">
+    <button id="navBtnAccounts">
+        <span>&#128100;</span> <div>Accounts</div>
+    </button>
+    <button id="navBtnDashboard">
+        <span>&#128202;</span> <div>Dashboard</div>
+    </button>
+    <button id="navBtnCalculator">
+        <span>🧮</span> <div>Calc</div>
+    </button>
+    <button id="navBtnSettings">
+        <span>&#9881;</span> <div>Settings</div>
+    </button>
+</nav>
+
+
+<div class="modal-backdrop" id="modalDashboardBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 style="margin:0">Dashboard</h2>
+        <button id="closeDashboard" class="no-print ghost small">Close</button>
+    </div>
+    <div class="dashboard-buttons">
+        <button id="dashBtnQuickPay">
+            <span style="font-size: 24px;">💲</span>
+            Quick Pay
+        </button>
+        <button id="dashBtnLiquidation">
+            <span style="font-size: 24px;">💰</span>
+            Liquidation
+        </button>
+        <button id="dashBtnPaymentLogs">
+            <span style="font-size: 24px;">📜</span>
+            Payment Logs
+        </button>
+        
+        <button id="dashBtnCalculator">
+            <span style="font-size: 24px;">🧮</span>
+            Calculator
+        </button>
+        </div>
+  </div>
+</div>
+
+
+
+<div class="modal-backdrop" id="modalAccountManagerBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 style="margin:0">Account Manager</h2>
+        <button id="closeAccountManager" class="no-print ghost small">Close</button>
+    </div>
+
+    <div class="card" style="margin-top:0; padding: 10px 14px;">
+        <div class="flex-between" style="flex-wrap:wrap; gap:10px;">
+            <div class="muted">Click an account row to view details.</div>
+            <div class="row" style="width: 100%; max-width: 500px; justify-content: flex-end;">
+                <input id="search" placeholder="Search account or name" style="flex-grow:1;" oninput="renderAccounts()" />
+                <button id="btnAdd" class="no-print small">➕ Add</button>
+                <button id="btnImport" class="no-print small ghost">Import</button>
+                <input type="file" id="fileImport" accept=".csv" style="display:none">
+                <button id="btnExport" class="no-print small ghost">Backup</button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card scrollable-accounts-container" style="margin-top:12px;">
+        <table style="table-layout: fixed;">
+            <thead class="account-manager-header">
+                <tr><th>Account #</th><th>Customer</th><th>Plan (₱)</th><th>Next Due</th><th>Status</th><th>Points</th></tr>
+            </thead>
+            <tbody id="accountsTbody">
+                </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+<div class="modal-backdrop" id="modalAccountBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="accTitle">Account</h3>
+      <div class="row">
+        <button class="ghost no-print small" id="btnEditAccount">Edit</button>
+        <button id="btnCloseAccount" class="no-print ghost small">Close</button>
+      </div>
+    </div>
+
+    <div id="accView" style="margin-top:12px">
+      <div class="col-2">
+        <div>
+          <label class="muted">Account Number</label><div id="accNumber" style="font-weight:700; color: var(--accent-2);"></div>
+          <label style="margin-top:8px" class="muted">Customer Name</label><div id="accName" style="font-weight:700;"></div>
+          <label style="margin-top:8px" class="muted">Service Address</label><div id="accAddress"></div>
+          <label style="margin-top:8px" class="muted">Billing Contact</label><div id="accContact"></div>
+          <label style="margin-top:8px" class="muted">Messenger ID</label><div id="accMessengerId" class="muted"></div>
+        </div>
+        <div>
+          <label class="muted">Plan</label><div id="accPlan" style="font-weight:700; color: var(--accent-2);"></div>
+          <label style="margin-top:8px" class="muted">Monthly Fee</label><div id="accFee"></div>
+          <label style="margin-top:8px" class="muted">Speed</label><div id="accSpeed"></div>
+          <label style="margin-top:8px" class="muted">Billing Day</label><div id="accBilling"></div>
+          <label style="margin-top:8px" class="muted">Status</label><div id="accStatus"></div>
+          <label style="margin-top:8px" class="muted">PPPoE</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="accPPPoE" style="font-weight:600;"></div>
+            <div id="accPPPass" style="filter:blur(6px); font-weight: 600;"></div>
+            <button class="small no-print ghost" id="togglePass">Show</button>
+          </div>
+        </div>
+      </div>
+
+      <hr style="margin:12px 0; border-color: var(--border);">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px; flex-wrap: wrap;">
+        <div class="points-box">
+          <div style="font-weight:700; margin-bottom: 4px; color: var(--accent-2);">Points & Balance</div>
+          <div class="points-detail">
+            <div class="muted">Advance: <strong id="accAdvancePoints">0</strong></div>
+            <div class="muted">On-time: <strong id="accOnTimePoints">0</strong></div>
+            <div class="muted">Lost: <strong id="accLostPoints">0</strong></div>
+          </div>
+        </div>
+        <div class="points-box">
+          <div style="font-weight:700; margin-bottom: 4px; color: var(--accent-2);">Excess / Lacking</div>
+          <div class="muted">Balance: <strong id="accBalanceAmount" style="color: var(--accent); text-shadow: var(--glow)">₱0.00</strong></div>
+        </div>
+        <div class="muted" style="text-align:right; align-self: flex-end;">Next Due: <strong id="accNextDue">--</strong></div>
+      </div>
+
+      <hr style="margin:12px 0; border-color: var(--border);">
+
+   <div style="margin-bottom: 10px;">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <h4 style="margin:0; color: var(--accent-2);">Payment Records</h4>
+            <button id="btnExportPayments" class="no-print small ghost" style="font-size: 11px;">📂 Export CSV</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <button id="btnAddPayment" class="no-print small" style="background: var(--accent); color: white;">
+                💲 Add Payment
+            </button>
+            <button id="btnAddCharge" class="no-print small ghost" style="color:var(--toast-error); border-color:var(--toast-error); text-align:center;">
+                ➕ Charge
+            </button>
+            <button id="btnAddDiscount" class="no-print small ghost" style="color:var(--toast-success); border-color:var(--toast-success); text-align:center;">
+                ➖ Discount
+            </button>
+        </div>
+
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
+            <button id="btnPrintInvoice" class="no-print small ghost" style="white-space: nowrap;">
+                🖨️ Receipt
+            </button>
+            <button id="btnPrintReminderInvoice" class="no-print small ghost" style="white-space: nowrap;">
+                🔔 Reminder
+            </button>
+            <button id="btnDownloadInvoicePng" class="no-print small ghost" style="color: var(--accent); border-color: var(--accent); white-space: nowrap;">
+                ⬇️ PNG
+            </button>
+            <button id="btnSendMessenger" class="no-print small ghost" style="white-space: nowrap;">
+                💬 Messenger
+            </button>
+        </div>
+
+      </div>
+
+
+      <div style="margin-top:10px; overflow-x: auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Ref #</th><th>Amount</th><th>Note</th><th>Surcharge/Balance Applied</th><th>Applied Total</th><th class="no-print">Actions</th></tr></thead>
+          <tbody id="paymentsTbody"></tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px; flex-wrap:wrap;">
+        <button id="btnSuspend" class="ghost no-print small">Suspend</button>
+        <button id="btnTerminate" class="ghost no-print small">Terminate</button>
+        <button id="btnReconnect" class="no-print small">Reconnect</button>
+        <button id="btnDeleteAccount" class="ghost no-print small" style="color: red; border-color: red;">Delete Account</button> </div>
+
+      <hr style="margin:12px 0; border-color: var(--border);">
+
+      <h4 style="margin:0; color: var(--accent-2);">Payment Calendar</h4>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <button class="small ghost no-print" id="calPrev">Prev</button>
+        <div id="calMonthLabel" style="font-weight:700"></div>
+        <button class="small ghost no-print" id="calNext">Next</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+      <hr style="margin:12px 0; border-color: var(--border);">
+      <h4 style="color: var(--accent-2);">Client Portal Access</h4>
+      <label class="muted">Client Username</label><input id="editClientUsername" />
+      <label style="margin-top:8px" class="muted">Client Password</label><input id="editClientPassword" />
+
+    <div id="accEdit" style="display:none;margin-top:12px">
+      <h4 style="color: var(--accent-2);">Edit Account</h4>
+      <label class="muted">Customer Name</label><input id="editName" />
+      <label style="margin-top:8px" class="muted">Service Address</label><input id="editAddress" />
+      <label style="margin-top:8px" class="muted">Billing Contact</label><input id="editContact" />
+      <label style="margin-top:8px" class="muted">Messenger ID (Optional for Auto-Send)</label><input id="editMessengerId" />
+      <label style="margin-top:8px" class="muted">Plan</label>
+      <select id="editPlan">
+        <option value="Basic|499|Up to 10 Mbps">Basic (₱499)</option>
+        <option value="Family|699|Up to 15 Mbps">Family (₱699)</option>
+        <option value="Gamer|899|Up to 20 Mbps">Gamer (₱899)</option>
+        <option value="Premium|1099|Up to 25 Mbps">Premium (₱1099)</option>
+        <option value="Business|1299|Up to 30 Mbps">Business/Ultimate (₱1299)</option>
+      </select>
+      <label style="margin-top:8px" class="muted">Billing Day (Fixed to 20)</label>
+      <input type="number" id="editBillingDay" min="1" max="28" value="20" readonly style="background: #f0f0f0; color: var(--text);"/>
+      <label style="margin-top:8px" class="muted">Status</label>
+      <select id="editStatus"><option>Active</option><option>Suspended</option><option>Terminated</option></select>
+      <label style="margin-top:8px" class="muted">PPPoE Username</label><input id="editPPUser" />
+      <label style="margin-top:8px" class="muted">PPPoE Password</label><input id="editPPPass" />
+      <div style="margin-top:10px;text-align:right">
+        <button id="btnSaveAccount">Save</button>
+        <button id="btnCancelEdit" class="ghost no-print">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalQuickPayBackdrop">
+  <div class="modal" style="width: min(95%, 400px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Quick Add Payment</h3>
+      <button id="closeQuickPay" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <div class="muted" style="margin-bottom:8px">Add a payment quickly</div>
+      <label class="muted">Account</label>
+      <select id="quickAccount"></select>
+      <label style="margin-top:8px" class="muted">Amount</label>
+      <input id="quickAmount" type="number" value="0" />
+      <label style="margin-top:8px" class="muted">Date</label>
+      <input id="quickDate" type="date" />
+      <div style="text-align:right;margin-top:16px"><button id="btnQuickPay">Add Payment</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalPayBackdrop">
+  <div class="modal" style="width: min(95%, 400px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Add Payment (Detailed)</h3>
+      <button id="closePay" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <label class="muted">Account</label><div id="payAccName" style="font-weight:700; color: var(--accent-2);"></div>
+      <label style="margin-top:8px" class="muted">Amount</label><input id="payAmount" type="number" />
+      <label style="margin-top:8px" class="muted">Date</label><input id="payDate" type="date" />
+      <label style="margin-top:8px" class="muted">Note</label><input id="payNote" />
+      <div style="text-align:right;margin-top:16px"><button id="savePay">Save Payment</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalLiquidationBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Total Liquidation of Payments (Monthly)</h3>
+      <button id="closeLiquidation" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <label class="muted">Select Month</label>
+      <input type="month" id="liquidationMonth" onchange="renderLiquidation()" />
+      <div class="liquidation-table-container">
+        <table class="liquidation-table">
+          <thead><tr><th>Month</th><th>Account #</th><th>Customer</th><th style="text-align:right;">Total Paid</th><th style="text-align:right;">Discount/Penalty</th><th style="text-align:right;">Net Collection</th></tr></thead>
+          <tbody id="liquidationTbody"></tbody>
+          <tfoot><tr><th colspan="3" style="text-align:right;">Grand Total:</th><th id="liquidationTotalPaid" style="text-align:right;"></th><th></th><th id="liquidationTotalNet" style="text-align:right;"></th></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalPaymentLogsBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Payment Logs (Bookkeeping)</h3>
+      <button id="closePaymentLogs" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+        <div class="card" style="margin-top:0; padding: 10px 14px;">
+            <label class="muted">Filter Month/Year</label>
+            <input type="month" id="logsMonthFilter" onchange="renderPaymentLogs()" style="width: 200px;" />
+            <button id="btnExportLogs" class="no-print small ghost" style="margin-left: 10px;">Export Logs (CSV)</button>
+        </div>
+        <div style="margin-top:12px;overflow:auto; max-height: 500px;">
+            <table>
+                <thead><tr><th>Date</th><th>Account #</th><th>Customer</th><th style="text-align:right;">Amount Paid</th><th>Note</th><th style="text-align:right;">Penalty/Excess Applied</th><th style="text-align:right;">Net Applied</th></tr></thead>
+                <tbody id="logsTbody"></tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalAddBackdrop">
+  <div class="modal" style="width: min(95%, 400px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="addTitle" style="color: var(--accent-2);">Create Account</h3>
+      <button id="closeAdd" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <label class="muted">Account Number</label><input id="newAccNumber" readonly style="background: #f0f0f0; color: var(--text);" />
+      <label style="margin-top:8px" class="muted">Customer Name</label><input id="newAccName" oninput="autoGeneratePPPoEPass()" />
+      <label style="margin-top:8px" class="muted">Service Address</label><input id="newAccAddress" />
+      <label style="margin-top:8px" class="muted">Billing Contact</label><input id="newAccContact" />
+      <label style="margin-top:8px" class="muted">Messenger ID (Optional)</label><input id="newAccMessengerId" placeholder="e.g., JohnDoe" />
+      <label style="margin-top:8px" class="muted">Plan</label>
+      <select id="newAccPlan">
+        <option value="Basic|499|Up to 10 Mbps">Basic (₱499)</option>
+        <option value="Family|699|Up to 15 Mbps">Family (₱699)</option>
+        <option value="Gamer|899|Up to 20 Mbps">Gamer (₱899)</option>
+        <option value="Premium|1099|Up to 25 Mbps">Premium (₱1099)</option>
+        <option value="Business|1299|Up to 30 Mbps">Business/Ultimate (₱1299)</option>
+      </select>
+      <label style="margin-top:8px" class="muted">Billing day (Fixed to 20)</label>
+      <input type="number" id="newAccBillingDay" min="1" max="28" value="20" readonly style="background: #f0f0f0; color: var(--text);"/>
+      <label style="margin-top:8px" class="muted">PPPoE Username</label><input id="newAccPPPoE" readonly style="background: #f0f0f0; color: var(--text);" />
+      <label style="margin-top:8px" class="muted">PPPoE Password (Based on Surname)</label><input id="newAccPPPass" />
+      <label style="margin-top:8px" class="muted">Status</label><select id="newAccStatus"><option>Active</option><option>Suspended</option><option>Terminated</option></select>
+      <div style="text-align:right;margin-top:16px"><button id="createAcc">Create</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalSettingsBackdrop">
+  <div class="modal" style="width: min(95%, 550px);"> 
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Administrator Settings</h3>
+      <button id="closeSettings" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:12px; max-height: 80vh; overflow-y: auto;">
+        
+        <h4 style="color: var(--accent); margin-top: 0;">📦 Internet Plans & Installation Fees</h4>
+        <div id="settingsPlanList" style="margin-bottom: 10px;"></div>
+        
+        <div style="background: var(--panel-2); padding: 10px; border-radius: 8px;">
+            <div style="font-weight: 700; margin-bottom: 5px; font-size: 12px;">Add New Plan</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                <input id="newPlanName" placeholder="Name (e.g. Fiber X)" />
+                <input id="newPlanSpeed" placeholder="Speed (e.g. 50 Mbps)" />
+                <input id="newPlanFee" type="number" placeholder="Monthly Fee" />
+                <input id="newPlanInstall" type="number" placeholder="Installation Fee" />
+            </div>
+            <button id="btnAddSystemPlan" class="small" style="width: 100%; margin-top: 5px;">+ Add Plan</button>
+        </div>
+        <hr style="margin:20px 0; border-color: var(--border);">
+
+        <h4 style="color: var(--accent); margin-top: 0;">Client Management</h4>
+        <button id="btnViewPendingClients" style="width: 100%;">View Pending Applications (<span id="pendingClientsCount">0</span>)</button>
+        <button id="btnViewUpgradeRequests" style="width: 100%; margin-top: 10px;">View Upgrade Requests (<span id="pendingUpgradesCount">0</span>)</button>
+        
+        <hr style="margin:20px 0; border-color: var(--border);">
+        <h4 style="color: var(--accent); margin-top: 0;">Security</h4>
+        
+        <label class="muted">Current Password</label><input id="currentPassword" type="password" />
+        <label class="muted" style="margin-top:5px;">New Password</label><input id="newPassword" type="password" />
+        <label class="muted" style="margin-top:5px;">Confirm</label><input id="confirmNewPassword" type="password" />
+        <button id="btnUpdatePassword" style="margin-top: 10px; width: 100%;">Update Password</button>
+
+        <hr style="margin:20px 0; border-color: var(--border);">
+        <h4 style="color: var(--accent); margin-top: 0;">Security Question (For Reset)</h4>
+        <label class="muted">Administrator Full Name</label>
+        <input id="adminFullName" type="text" />
+        <label style="margin-top:8px" class="muted">Secret Code</label>
+        <input id="adminSecretCode" type="text" />
+        <div style="text-align:right;margin-top:16px">
+            <button id="btnUpdateSecurity">Update Security</button>
+        </div>
+
+        <div style="text-align:center; margin-top: 20px;">
+             <button id="btnLogout" class="no-print" style="background: var(--toast-error); width: 100%;">🚪 Logout</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalCalculatorBackdrop">
+  <div class="modal" style="width: min(95%, 350px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">🧮 Calculator</h3>
+      <button id="closeCalculator" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:10px">
+        <input type="text" id="calcDisplay" class="calc-display" readonly value="">
+        <div class="calc-grid">
+            <button class="calc-btn" onclick="calcAppend('7')">7</button>
+            <button class="calc-btn" onclick="calcAppend('8')">8</button>
+            <button class="calc-btn" onclick="calcAppend('9')">9</button>
+            <button class="calc-btn accent" onclick="calcAppend('/')">÷</button>
+            
+            <button class="calc-btn" onclick="calcAppend('4')">4</button>
+            <button class="calc-btn" onclick="calcAppend('5')">5</button>
+            <button class="calc-btn" onclick="calcAppend('6')">6</button>
+            <button class="calc-btn accent" onclick="calcAppend('*')">×</button>
+            
+            <button class="calc-btn" onclick="calcAppend('1')">1</button>
+            <button class="calc-btn" onclick="calcAppend('2')">2</button>
+            <button class="calc-btn" onclick="calcAppend('3')">3</button>
+            <button class="calc-btn accent" onclick="calcAppend('-')">-</button>
+            
+            <button class="calc-btn" onclick="calcAppend('0')">0</button>
+            <button class="calc-btn" onclick="calcAppend('.')">.</button>
+            <button class="calc-btn" style="background:var(--toast-error); color:white;" onclick="calcClear()">C</button>
+            <button class="calc-btn accent" onclick="calcAppend('+')">+</button>
+        </div>
+        <button class="calc-btn accent" style="width: 100%; margin-top: 10px;" onclick="calcEqual()">=</button>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalChargeBackdrop">
+  <div class="modal" style="width: min(95%, 400px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Add Extra Charge/Item</h3>
+      <button id="closeCharge" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <p class="muted" style="font-size:12px">Add hardware fees, labor, or miscellaneous charges to the invoice.</p>
+      <label class="muted">Description</label>
+      <input id="chargeNote" placeholder="e.g. Modem Adaptor, Ethernet Cable" />
+      <label style="margin-top:8px" class="muted">Amount</label>
+      <input id="chargeAmount" type="number" />
+      <div style="text-align:right;margin-top:16px"><button id="btnSaveCharge">Add to Account</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="printArea" class="hidden">
+  <div class="invoice-container" id="invoiceContent"></div>
+</div>
+
+<div class="modal-backdrop" id="modalRegisterBackdrop">
+  <div class="modal" style="width: min(95%, 450px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">New Client Application</h3>
+      <button id="closeRegister" class="no-print ghost small">Close</button>
+    </div>
+
+    <div id="regStep1">
+        <div style="margin-top:8px">
+          <label class="muted">Full Name</label><input id="regFullName" />
+          <label style="margin-top:8px" class="muted">Service Address</label><input id="regAddress" />
+          <label style="margin-top:8px" class="muted">Contact Number</label><input id="regContact" />
+          
+          <label style="margin-top:12px; display:block; font-weight:700; color: var(--accent);">Select a Plan</label>
+          <div id="regPlanContainer" class="plan-grid">
+              </div>
+          <input type="hidden" id="regSelectedPlanIndex" />
+
+          <hr style="margin:12px 0; border-color: var(--border);">
+          <label class="muted">Desired Username</label><input id="regUsername" />
+          <label style="margin-top:8px" class="muted">Desired Password</label><input id="regPassword" type="password" />
+          
+          <div style="text-align:right;margin-top:16px">
+              <button id="btnRegNext">Next: Payment &raquo;</button>
+          </div>
+        </div>
+    </div>
+
+    <div id="regStep2" style="display:none;">
+        <h4 style="margin: 0 0 10px 0;">💰 Installation Payment</h4>
+        <div class="card" style="background: #fff8e1; border: 1px solid #d49a37; padding: 10px; margin-top: 0;">
+            <div class="flex-between"><span>Selected Plan:</span> <strong id="payPlanName">--</strong></div>
+            <div class="flex-between"><span>Monthly Fee:</span> <span id="payPlanFee">--</span></div>
+            <div class="flex-between" style="color: var(--toast-warning);"><span>Installation Fee:</span> <strong id="payInstallFee">--</strong></div>
+            <hr style="margin: 5px 0;">
+            <div class="flex-between" style="font-size: 16px;"><span>Total to Pay:</span> <strong id="payTotal" style="color: var(--accent);">--</strong></div>
+        </div>
+
+        <div style="text-align:center; margin-top: 15px;">
+            <p class="muted" style="font-size:12px;">Scan via GCash to pay the Installation Fee</p>
+            <img src="gcash-qr.png" style="width: 150px; height: 150px; border: 2px solid var(--accent); border-radius: 8px;">
+            <h4 style="margin:5px 0; color:var(--accent-2);">09317926807</h4>
+            
+            <label class="muted" style="text-align:left; display:block; margin-top:10px;">GCash Reference Number</label>
+            <input id="regGcashRef" placeholder="Enter Ref #" />
+        </div>
+
+        <div style="text-align:right;margin-top:16px; display:flex; gap: 10px; justify-content: flex-end;">
+            <button id="btnRegBack" class="ghost">Back</button>
+            <button id="btnSubmitApplication">Submit Application</button>
+        </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="modalPendingClientsBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Pending Client Applications</h3>
+      <button id="closePendingClients" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:12px;overflow:auto; max-height: 500px;">
+        <table>
+            <thead><tr><th>Name</th><th>Contact</th><th>Address</th><th>Plan</th><th>Actions</th></tr></thead>
+            <tbody id="pendingClientsTbody"></tbody>
+        </table>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalUpgradeRequestsBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Pending Upgrade Requests</h3>
+      <button id="closeUpgradeRequests" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:12px;overflow:auto; max-height: 500px;">
+        <table>
+            <thead><tr><th>Account #</th><th>Customer</th><th>Current Plan</th><th>Requested Plan</th><th>Actions</th></tr></thead>
+            <tbody id="pendingUpgradesTbody"></tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="modalClientPortalBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="clientPortalTitle" style="color: var(--accent-2);">Client Portal</h3>
+      <button id="btnClientLogout" class="no-print small ghost">Logout</button>
+    </div>
+
+    <div style="margin-top:12px">
+        <div class="card" style="margin-top:0;">
+            <div class="col-2">
+                <div>
+                    <label class="muted">Account Number</label><div id="clientAccNumber" style="font-weight:700; color: var(--accent-2);"></div>
+                    <label style="margin-top:8px" class="muted">Service Address</label><div id="clientAccAddress"></div>
+                    <label style="margin-top:8px" class="muted">Billing Contact</label><div id="clientAccContact"></div>
+                </div>
+                <div>
+                    <label class="muted">Plan</label><div id="clientAccPlan" style="font-weight:700; color: var(--accent-2);"></div>
+                    <label style="margin-top:8px" class="muted">Monthly Fee</label><div id="clientAccFee"></div>
+                    <label style="margin-top:8px" class="muted">Status</label><div id="clientAccStatus"></div>
+                    <label style="margin-top:8px" class="muted">Next Due Date</label><div id="clientAccNextDue" style="font-weight: 700;"></div>
+                                        <label style="margin-top:8px" class="muted">Amount for Next Bill</label>
+                    <div id="clientAccAmountDue" style="font-weight: 700; font-size: 18px; color: var(--accent);">₱0.00</div>
+
+                </div>
+            </div>
+            <hr style="margin:12px 0; border-color: var(--border);">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px; flex-wrap: wrap;">
+                <div>
+                    <div class="muted">Current Balance (Excess / Lacking)</div>
+                    <div id="clientAccBalance" style="font-weight:700; font-size: 20px;">₱0.00</div>
+                </div>
+                <button id="btnClientPayNow" class="no-print" style="padding: 12px 20px;">💲 Pay Now</button>
+            </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+            <h4 style="margin:0; color: var(--accent-2);">Request Plan Upgrade</h4>
+            <p class="muted" style="font-size: 12px; margin: 4px 0 10px 0;">Your current plan is: <strong id="clientCurrentPlanName">--</strong></p>
+            <label class="muted">Select New Plan</label>
+            <select id="clientPlanUpgradeSelect"></select>
+            <button id="btnClientRequestUpgrade" class="no-print" style="width: 100%; margin-top: 10px;">Request Upgrade</button>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+            <h4 style="margin:0; color: var(--accent-2);">Payment History</h4>
+            <div style="margin-top:10px; overflow-x: auto; max-height: 300px;">
+                <table>
+                <thead><tr><th>Date</th><th>Ref #</th><th>Amount</th><th>Note</th><th>Penalty</th><th>Net Applied</th></tr></thead>
+                <tbody id="clientPaymentsTbody"></tbody>
+                </table>
+          <div class="speed-test-container">
+            <div class="speed-test-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                     <span style="font-size: 20px;">🚀</span>
+                     <h4 style="margin:0; color: #fff;">Network Speed Test</h4>
+                </div>
+                <span class="badge" style="background: #00ff00; color: black;">Powered by Fast.com</span>
+            </div>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <iframe src="https://fast.com" style="border:none; width:100%; height:100%;" title="Speed Test"></iframe>
+            </div>
+            <div style="background: #222; color: #aaa; font-size: 10px; padding: 5px; text-align: center;">
+                Note: If the test doesn't auto-start, <a href="https://fast.com" target="_blank" style="color: #fff;">Click Here</a> to open in new tab.
+            </div>
+        </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalGcashPaymentBackdrop">
+    <div class="modal" style="width: min(95%, 400px);">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 style="color: var(--accent-2);">Pay with GCash</h3>
+            <button id="closeGcashPay" class="no-print ghost small">Close</button>
+        </div>
+        <div style="margin-top:8px; text-align: center;">
+            <p class="muted">Scan the QR code or use the number below.</p>
+            <img src="gcash-qr.png" alt="GCash QR Code" style="width: 200px; height: 200px; border: 2px solid var(--accent); border-radius: 8px;">
+            <h4 style="margin: 10px 0;">NO***L JO*N R.</h4>
+            <h3 style="margin: 5px 0; color: var(--accent-2);">09317926807</h3>
+
+            <a href="gcash://open" class="no-print" style="display: block; width: 100%; margin-top: 15px;">
+    <button style="width: 100%; background: #007bff;">Open GCash App</button>
+</a>
+
+
+            <hr style="margin:20px 0; border-color: var(--border);">
+            <h4 style="margin: 10px 0; color: var(--toast-warning);">After Paying:</h4>
+            <p class="muted" style="font-size: 12px;">After paying, please wait for the admin to verify and manually add your payment to the system. This may take 24-48 hours.</p>
+            <label class="muted">Enter GCash Reference # (Optional)</label>
+            <input id="clientGcashRef" placeholder="e.g., 1234567890" />
+            <button id="btnSubmitGcashProof" style="width: 100%; margin-top: 10px;">Submit Proof for Verification</button>
+        </div>
+    </div>
+</div>
+        <div class="card" style="margin-top:16px; border: 1px solid var(--accent);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0; color: var(--accent-2);">🚀 Speed Test</h4>
+                <span class="badge" style="background: #202020; color: #00ff00;">Powered by Fast.com</span>
+            </div>
+            
+            <p class="muted" style="font-size:12px; margin: 5px 0 10px 0;">
+                Check your current internet speed without leaving the dashboard.
+            </p>
+
+            <div style="position: relative; width: 100%; height: 300px; overflow: hidden; border-radius: 8px; border: 1px solid #ccc;">
+                <iframe 
+                    src="https://fast.com" 
+                    style="width: 100%; height: 100%; border: none;"
+                    title="Fast.com Speed Test">
+                </iframe>
+            </div>
+            
+            <div style="text-align: center; margin-top: 5px;">
+                <small class="muted">If the test doesn't load, <a href="https://fast.com" target="_blank" style="color:var(--accent);">click here</a>.</small>
+            </div>
+        </div>
+        </div> </div>
+</div>
+<div class="modal-backdrop" id="modalDiscountBackdrop">
+  <div class="modal" style="width: min(95%, 400px);">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color: var(--accent-2);">Add Discount</h3>
+      <button id="closeDiscount" class="no-print ghost small">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <p class="muted" style="font-size:12px">Apply a one-time discount (e.g., Promo, Goodwill, Correction).</p>
+      <label class="muted">Description</label>
+      <input id="discountNote" placeholder="e.g. Loyalty Promo, Error Correction" />
+      <label style="margin-top:8px" class="muted">Amount</label>
+      <input id="discountAmount" type="number" />
+      <div style="text-align:right;margin-top:16px"><button id="btnSaveDiscount">Apply Discount</button></div>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    
+ 
+// --- 1. GLOBAL VARIABLES (PASTE THIS AT THE VERY TOP OF SCRIPT) ---
+const STORAGE_KEY = 'nrtech_accounts_v3';
+const FIXED_BILLING_DAY = 20;
+
+// NEW: Global Plan Configuration
+const PLANS_KEY = 'nrtech_plans_v3';
+const DEFAULT_PLANS = [
+    { id: 1, name: "Basic", fee: 499, speed: "Up to 10 Mbps", install: 1500 },
+    { id: 2, name: "Family", fee: 699, speed: "Up to 15 Mbps", install: 1500 },
+    { id: 3, name: "Gamer", fee: 899, speed: "Up to 20 Mbps", install: 2000 },
+    { id: 4, name: "Premium", fee: 1099, speed: "Up to 25 Mbps", install: 2500 },
+    { id: 5, name: "Business", fee: 1299, speed: "Up to 30 Mbps", install: 3500 }
+];
+
+let systemPlans = JSON.parse(localStorage.getItem(PLANS_KEY)) || DEFAULT_PLANS;
+const NOTIFICATIONS_STORAGE_KEY = 'nrtech_admin_notifs_v3';
+let adminNotifications = JSON.parse(localStorage.getItem(NOTIFICATIONS_STORAGE_KEY)) || [];
+
+// CLIENT PORTAL VARIABLES (This fixes the Error 1)
+const PENDING_CLIENTS_KEY = 'nrtech_pending_clients_v3';
+const PENDING_PAYMENTS_KEY = 'nrtech_pending_payments_v3';
+const CLIENT_LOGIN_KEY = 'nrtech_client_login_v3';
+const PENDING_UPGRADES_KEY = 'nrtech_pending_upgrades_v3';
+
+// THIS WAS THE CAUSE OF THE ERROR:
+let isClientLoginMode = false; 
+
+let pendingClients = JSON.parse(localStorage.getItem(PENDING_CLIENTS_KEY)) || [];
+let pendingPayments = JSON.parse(localStorage.getItem(PENDING_PAYMENTS_KEY)) || [];
+let pendingUpgrades = JSON.parse(localStorage.getItem(PENDING_UPGRADES_KEY)) || [];
+let activeClientAccount = null;
+
+function saveSystemPlans() {
+    localStorage.setItem(PLANS_KEY, JSON.stringify(systemPlans));
+}
+// ---------------------------------------------------------
+
+/* =========================
+   TOAST NOTIFICATION SYSTEM (NEW)
+   ========================= */
+const toastContainer = document.getElementById('toastContainer');
+
+function showToast(message, type = 'success', duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = message;
+
+    // Add custom close button for error/warning
+    if (type !== 'success') {
+        const closeBtn = document.createElement('span');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.float = 'right';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.marginLeft = '10px';
+        closeBtn.onclick = () => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 300);
+        };
+        toast.appendChild(closeBtn);
+    }
+
+    toastContainer.prepend(toast); // Prepend to show new toasts at the top
+
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 300); // Remove after fade-out transition
+    }, duration);
+}
+
+/* =========================
+   CUSTOM CONFIRMATION (REPLACEMENT FOR WINDOW.CONFIRM)
+   ========================= */
+const confirmationModalBackdrop = document.getElementById('confirmationModalBackdrop');
+const confirmationModalMessage = document.getElementById('confirmationMessage');
+const btnConfirmOK = document.getElementById('btnConfirmOK');
+const btnConfirmCancel = document.getElementById('btnConfirmCancel');
+const confirmationTitle = document.getElementById('confirmationTitle');
+
+let confirmationResolve;
+
+function customConfirm(message, title = '⚠️ Confirmation Required') {
+    return new Promise(resolve => {
+        confirmationResolve = resolve;
+        confirmationTitle.innerHTML = title;
+        confirmationMessage.textContent = message;
+        confirmationModalBackdrop.style.display = 'flex';
+    });
+}
+
+btnConfirmOK.onclick = () => {
+    confirmationModalBackdrop.style.display = 'none';
+    confirmationResolve(true);
+};
+
+btnConfirmCancel.onclick = () => {
+    confirmationModalBackdrop.style.display = 'none';
+    confirmationResolve(false);
+};
+
+
+/* =========================
+   SECURITY & AUTH (SIMULATED)
+   ========================= */
+const AUTH_KEY = 'nrtech_auth_v3';
+const LOGIN_STORAGE_KEY = 'nrtech_login_v3';
+const AUTO_LOGOUT_DURATION = 300000; // 5 minutes in milliseconds
+
+let autoLogoutTimer;
+
+// Default credentials for the *first* run
+const DEFAULT_AUTH_STATE = {
+    username: 'admin',
+    password: 'admin', // UNSAFE - DEMO ONLY
+    fullName: 'Administrator',
+    secretCode: 'secret',
+};
+
+let authState = loadAuthState();
+
+function loadAuthState() {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) {
+        localStorage.setItem(AUTH_KEY, JSON.stringify(DEFAULT_AUTH_STATE));
+        return DEFAULT_AUTH_STATE;
+    }
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error("Auth state corrupted, resetting.", e);
+        localStorage.removeItem(AUTH_KEY);
+        return DEFAULT_AUTH_STATE;
+    }
+}
+
+function saveAuthState() {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(authState));
+}
+
+function isLoggedIn() {
+    return localStorage.getItem(LOGIN_STORAGE_KEY) === 'true';
+}
+
+function setLoginState(state) {
+    localStorage.setItem(LOGIN_STORAGE_KEY, state ? 'true' : 'false');
+    document.getElementById('mainHeader').classList.toggle('hidden', !state);
+    document.getElementById('mainContainer').classList.toggle('hidden', !state);
+    // NEW: Show/Hide new marquee header and new footer nav
+    document.getElementById('marqueeHeader').classList.toggle('hidden', !state);
+    document.getElementById('fixedNavFooter').classList.toggle('hidden', !state);
+    document.getElementById('loginModalBackdrop').style.display = state ? 'none' : 'flex';
+    if (state) {
+        resetAutoLogoutTimer();
+    } else {
+        clearTimeout(autoLogoutTimer);
+        // Hide notification popup on logout
+        document.getElementById('notificationPopup').style.display = 'none';
+    }
+}
+
+document.getElementById('btnLogin').onclick = () => {
+    const user = document.getElementById('loginUsername').value;
+    const pass = document.getElementById('loginPassword').value;
+
+    if (isClientLoginMode) {
+        // --- CLIENT LOGIN LOGIC ---
+        const clientAccount = accounts.find(a => a.clientUsername === user && a.clientPassword === pass);
+        
+        if (clientAccount) {
+            localStorage.setItem(CLIENT_LOGIN_KEY, clientAccount.accountNumber);
+            setLoginState(false); // Hide admin UI
+            document.getElementById('loginModalBackdrop').style.display = 'none';
+            showClientPortal(clientAccount);
+            showToast('Client login successful!', 'success');    pushNotification('success', `Client Login: ${clientAccount.name} accessed portal.`, 'viewAccount', clientAccount.accountNumber);
+
+        } else {
+            showToast('Login Failed: Invalid client username or password.', 'error');
+        }
+
+    } else {
+        // --- ADMIN LOGIN LOGIC (Original) ---
+        if (user === authState.username && pass === authState.password) {
+            setLoginState(true);
+            showToast('Login Successful!', 'success');
+            init();
+        } else {
+            showToast('Login Failed: Invalid username or password.', 'error');
+        }
+    }
+};
+
+
+// Toggle password visibility on login modal
+document.getElementById('toggleLoginPass').onclick = (e) => {
+    const passInput = document.getElementById('loginPassword');
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        e.target.textContent = 'Hide';
+    } else {
+        passInput.type = 'password';
+        e.target.textContent = 'Show';
+    }
+};
+
+// Logout function (MOVED from header to settings modal, but ID is the same)
+document.getElementById('btnLogout').onclick = async () => {
+    const shouldLogout = await customConfirm("Are you sure you want to log out?");
+    if (shouldLogout) {
+        setLoginState(false);
+        showToast("You have been logged out.", 'warning');
+        // Close settings modal if open
+        modalSettingsBackdrop.style.display = 'none';
+    }
+};
+
+// Auto-logout timer logic
+function resetAutoLogoutTimer() {
+    clearTimeout(autoLogoutTimer);
+    if (isLoggedIn()) {
+        autoLogoutTimer = setTimeout(() => {
+            setLoginState(false);
+            showToast("You have been automatically logged out due to inactivity.", 'warning');
+        }, AUTO_LOGOUT_DURATION);
+    }
+}
+
+// Attach event listeners for user activity
+['mousemove', 'keypress', 'click', 'scroll', 'touchstart'].forEach(eventType => {
+    window.addEventListener(eventType, resetAutoLogoutTimer, true);
+});
+
+
+document.getElementById('forgotPasswordLink').onclick = (e) => {
+    e.preventDefault();
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('forgotPasswordForm').style.display = 'block';
+    document.getElementById('resetFullName').value = '';
+    document.getElementById('resetSecretCode').value = '';
+};
+
+document.getElementById('btnCancelReset').onclick = () => {
+    document.getElementById('forgotPasswordForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+};
+
+document.getElementById('btnResetPassword').onclick = () => {
+    const name = document.getElementById('resetFullName').value.trim();
+    const code = document.getElementById('resetSecretCode').value.trim();
+
+    if (name === authState.fullName && code === authState.secretCode) {
+        const newPass = prompt("Security check passed. Enter your new password:");
+        if (newPass && newPass.length >= 4) {
+            authState.password = newPass;
+            saveAuthState();
+            showToast('Password reset successfully! Please log in with your new password.', 'success');
+            document.getElementById('btnCancelReset').click();
+        } else {
+            showToast('New password must be at least 4 characters long.', 'error');
+        }
+    } else {
+        showToast('Security check failed: Full Name or Secret Code is incorrect.', 'error');
+    }
+};
+
+
+// --- SETTINGS MODAL LOGIC (Button now in footer) ---
+const modalSettingsBackdrop = document.getElementById('modalSettingsBackdrop');
+// (btnSettingsOpen removed, new opener is navBtnSettings)
+document.getElementById('closeSettings').onclick = () => {
+    modalSettingsBackdrop.style.display = 'none';
+    clearActiveNav();
+};
+
+document.getElementById('btnUpdatePassword').onclick = () => {
+    const currentPass = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmNewPassword').value;
+
+    if (currentPass !== authState.password) {
+        return showToast('Current password is incorrect.', 'error');
+    }
+    if (newPass.length < 4) {
+        return showToast('New password must be at least 4 characters long.', 'error');
+    }
+    if (newPass !== confirmPass) {
+        return showToast('New passwords do not match.', 'error');
+    }
+
+    authState.password = newPass;
+    saveAuthState();
+    showToast('Password updated successfully. Please remember your new password!', 'success');
+    document.getElementById('closeSettings').click();
+};
+
+document.getElementById('btnUpdateSecurity').onclick = () => {
+    const newFullName = document.getElementById('adminFullName').value.trim();
+    const newSecretCode = document.getElementById('adminSecretCode').value.trim();
+
+    if (!newFullName || !newSecretCode) {
+        return showToast('Full Name and Secret Code are required.', 'error');
+    }
+
+    authState.fullName = newFullName;
+    authState.secretCode = newSecretCode;
+    saveAuthState();
+    showToast('Security Question/Code updated successfully.', 'success');
+    document.getElementById('closeSettings').click();
+};
+
+
+/* =========================
+   NOTIFICATION SYSTEM (NEW)
+   ========================= */
+const NOTIF_READ_KEY = 'nrtech_notifications_read_v3';
+const notificationPopup = document.getElementById('notificationPopup');
+const notificationList = document.getElementById('notificationList');
+const notificationBadge = document.getElementById('notificationBadge');
+let notifications = [];
+let readNotifIds = JSON.parse(localStorage.getItem(NOTIF_READ_KEY)) || [];
+
+/* =========================
+   ADVANCED NOTIFICATION SYSTEM (UPDATED)
+   ========================= */
+function pushNotification(type, message, actionFnName, dataId) {
+    const newNotif = {
+        id: Date.now(),
+        type: type, // 'info', 'warning', 'success', 'alert'
+        message: message,
+        date: new Date().toISOString(),
+        read: false,
+        action: actionFnName,
+        dataId: dataId
+    };
+    adminNotifications.unshift(newNotif); 
+    localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(adminNotifications));
+    updateNotificationBadge();
+    showToast(`New Notification: ${message}`, 'info');
+}
+
+function updateNotificationBadge() {
+    const unread = adminNotifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    if (unread > 0) {
+        badge.textContent = unread;
+        badge.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function renderNotifications() {
+    const list = document.getElementById('notificationList');
+    list.innerHTML = '';
+    
+    if (adminNotifications.length === 0) {
+        list.innerHTML = '<div style="padding: 20px; text-align: center;" class="muted">No notifications.</div>';
+        return;
+    }
+
+    adminNotifications.forEach((n) => {
+        const item = document.createElement('div');
+        item.className = `notif-item ${n.read ? '' : 'unread'}`;
+        let icon = '🔔';
+        if(n.type === 'alert') icon = '🔴';
+        if(n.type === 'success') icon = '🟢';
+        
+        item.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <span class="notif-type">${icon} ${new Date(n.date).toLocaleDateString()}</span>
+                ${!n.read ? '<span style="color:red; font-size:10px;">● New</span>' : ''}
+            </div>
+            <div>${n.message}</div>
+        `;
+        
+        item.onclick = () => {
+            n.read = true;
+            localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(adminNotifications));
+            updateNotificationBadge();
+            renderNotifications();
+            
+            if(n.action === 'viewPendingClients') {
+                document.getElementById('btnViewPendingClients').click();
+            } else if (n.action === 'viewUpgrades') {
+                document.getElementById('btnViewUpgradeRequests').click();
+            } else if (n.action === 'viewAccount') {
+                const accIdx = accounts.findIndex(a => a.accountNumber === n.dataId);
+                if(accIdx > -1) openAccount(accIdx);
+            }
+            document.getElementById('notificationPopup').style.display = 'none';
+        };
+        list.appendChild(item);
+    });
+}
+
+document.getElementById('btnNotifications').onclick = (e) => {
+    e.stopPropagation();
+    const popup = document.getElementById('notificationPopup');
+    if (popup.style.display === 'block') {
+        popup.style.display = 'none';
+    } else {
+        renderNotifications();
+        popup.style.display = 'block';
+    }
+};
+
+document.getElementById('notifMarkAsRead').onclick = (e) => {
+    e.stopPropagation();
+    adminNotifications.forEach(n => n.read = true);
+    localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(adminNotifications));
+    updateNotificationBadge();
+    renderNotifications();
+};
+// Initialize Badge
+updateNotificationBadge();
+
+
+document.getElementById('notifMarkAsRead').onclick = (e) => {
+    e.stopPropagation();
+    notifications.forEach(notif => markNotifAsRead(notif.id));
+    renderNotifications(); // Re-render to remove all 'unread' classes
+};
+
+// Close notification popup when clicking outside
+window.addEventListener('click', (e) => {
+    if (!notificationPopup.contains(e.target) && !document.getElementById('btnNotifications').contains(e.target)) {
+        notificationPopup.style.display = 'none';
+    }
+});
+
+
+/* =========================
+   DATA & STORAGE
+   ========================= */
+
+
+// --- NEW: Global Plan Configuration ---
+
+
+
+
+function saveSystemPlans() {
+    localStorage.setItem(PLANS_KEY, JSON.stringify(systemPlans));
+}
+
+
+const PRELOAD = [
+  ["NR2021C0001A","Curlito Albarote","San Vicente Patudan Tubod LDN","0917-000-0000","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0001A","ALBAROTE", "curlito.albarote"],
+  ["NR2021C0002A","Ires Pepito","San Vicente Patudan Tubod LDN","0917-000-0001","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0002A","PEPITO", "ires.pepito"],
+  ["NR2021C0003A","Felan Noya","San Vicente Patudan Tubod LDN","0917-000-0002","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0003A","NOYA", "felan.noya"],
+  ["NR2021C0004A","Anarie Bacalso","San Vicente Patudan Tubod LDN","0917-000-0003","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0004A","BACALSO", "anarie.bacalso"],
+  ["NR2021C0005A","Vincent Pepito","San Vicente Patudan Tubod LDN","0917-000-0004","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Terminated","C0005A","PEPITO", "vincent.pepito"],
+  ["NR2021C0006A","Ariane Jean Albarote","San Vicente Patudan Tubod LDN","0917-000-0005","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0006A","ALBAROTE", "ariane.albarote"],
+  ["NR2021C0007A","Victoria Espra","San Vicente Patudan Tubod LDN","0917-000-0006","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0007A","ESPRA", "victoria.espra"],
+  ["NR2021C0008A","Carolyn Sarabia","San Vicente Patudan Tubod LDN","0917-000-0007","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0008A","SARABIA", "carolyn.sarabia"],
+  ["NR2021C0009A","Frankie Sarabia","Patudan Tubod LDN","0917-000-0008","Family|699|Up to 15 Mbps",FIXED_BILLING_DAY,"Active","C0009A","SARABIA", "frankie.sarabia"],
+  ["NR2021C0010A","Lorifel Bacalso","San Vicente Patudan Tubod LDN","0917-000-0009","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0010A","BACALSO", "lorifel.bacalso"],
+  ["NR2021C0011A","Helen Torres","San Vicente Patudan Tubod LDN","0917-000-0010","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0011A","TORRES", "helen.torres"],
+  ["NR2021C0012A","Thalia Arcilla","San Vicente Patudan Tubod LDN","0917-000-0011","Family|699|Up to 15 Mbps",FIXED_BILLING_DAY,"Active","C0012A","ARCILLA", "thalia.arcilla"],
+  ["NR2021C0013A","Delmark Porlas","P4 Patudan Tubod LDN","0917-000-0012","Gamer|899|Up to 20 Mbps",FIXED_BILLING_DAY,"Active","C0013A","PORLAS", "delmark.porlas"],
+  ["NR2021C0014A","Lucille Tecson","San Vicente Patudan Tubod LDN","0917-000-0013","Premium|1099|Up to 25 Mbps",FIXED_BILLING_DAY,"Active","C0014A","TECSON", "lucille.tecson"],
+  ["NR2021C0015A","Arnilo Moral","San Vicente Patudan Tubod LDN","0917-000-0014","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0015A","MORAL", "arnilo.moral"],
+  ["NR2021C0016A","Susan Sugan","San Vicente Patudan Tubod LDN","0917-000-0015","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0016A","SUGAN", "susan.sugan"],
+  ["NR2021C0017A","Zacarias","San Vicente Patudan Tubod LDN","0917-000-0016","Basic|499|UpTo 10 mbps",FIXED_BILLING_DAY,"Terminated","C0017A","ZACARIAS", "zacarias.user"],
+  ["NR2021C0018A","Sarah Jane Carnable","San Vicente Patudan Tubod LDN","0917-000-0017","Basic|499|Up to 10 Mbps",FIXED_BILLING_DAY,"Active","C0018A","CARNABLE", "sarah.carnable"]
+];
+
+function generateRefNumber(accNum, date) {
+    const dateStr = date.replace(/-/g, '');
+    const random = Math.floor(1000 + Math.random() * 9000);
+    return `REF-${accNum}-${dateStr}-${random}`;
+}
+
+function loadAccounts(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){
+    const arr = PRELOAD.map(r=>{
+      const [acc,name,addr,contact,planStr,billingDay,status,pppUser,pppPass, messengerId]=r;
+      const [pname,pfee,pspeed]=planStr.split('|');
+      return {
+        accountNumber: acc, name, address: addr, contact, messengerId: messengerId || '',
+        plan:{name:pname, fee:Number(pfee), speed:pspeed},
+        billingDay: FIXED_BILLING_DAY,
+        status: status || 'Active',
+        pppoeUsername: pppUser || '',
+        pppoePassword: pppPass || '',
+        payments: [],
+        points: {advance:0, ontime:0, lost:0},
+        nextDue: computeNextDue(null, FIXED_BILLING_DAY),
+        excessLackingBalance: 0,
+        createdAt: new Date().toISOString()
+      };
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    return arr;
+  }
+    try {
+      const parsed = JSON.parse(raw);
+      // --- NEW: Ensure new fields exist ---
+      return parsed.map(acc => ({
+          messengerId: acc.messengerId || '',
+          clientUsername: acc.clientUsername || null,
+          clientPassword: acc.clientPassword || null,
+          ...acc
+      }));
+      // --- END NEW ---
+  } catch(e){
+      console.error(e);
+      localStorage.removeItem(STORAGE_KEY);
+      return loadAccounts();
+  }
+
+}
+function saveAccounts(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts)); }
+
+function computeNextDue(lastPaymentDateIso, billingDay=FIXED_BILLING_DAY){
+    const day = FIXED_BILLING_DAY;
+
+    if (!lastPaymentDateIso) {
+        const now = new Date();
+        let year = now.getFullYear();
+        let month = now.getMonth();
+        if (now.getDate() > day) {
+            month++;
+            if (month > 11) { month = 0; year++; }
+        }
+        return new Date(year, month, day).toISOString().slice(0, 10);
+    }
+
+    let ref = new Date(lastPaymentDateIso + 'T00:00:00');
+    let nm = ref.getMonth() + 1;
+    let ny = ref.getFullYear();
+
+    if(nm > 11){
+        nm = 0;
+        ny++;
+    }
+
+    return new Date(ny, nm, day).toISOString().slice(0, 10);
+}
+
+function getNextBillingCycleDueDate(billingDay = FIXED_BILLING_DAY) {
+    const today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth();
+    const day = FIXED_BILLING_DAY;
+
+    if (today.getDate() > day) {
+        month++;
+        if (month > 11) {
+            month = 0;
+            year++;
+        }
+    }
+    return new Date(year, month, day).toISOString().slice(0, 10);
+}
+
+// --- GLOBAL VARIABLES INITIALIZATION FIX ---
+let accounts = loadAccounts();
+let activeAccountIndex = null;
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+let paymentAnalysisChart = null;
+
+// --- MOVED UP: CLIENT PORTAL VARIABLES (Fixes Initialization Error) ---
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   UI RENDER
+   ========================= */
+const accountsTbody = document.getElementById('accountsTbody');
+const quickAccount = document.getElementById('quickAccount');
+const modalAccountManagerBackdrop = document.getElementById('modalAccountManagerBackdrop');
+const modalAccountBackdrop = document.getElementById('modalAccountBackdrop');
+const modalQuickPayBackdrop = document.getElementById('modalQuickPayBackdrop');
+const modalPayBackdrop = document.getElementById('modalPayBackdrop');
+const modalAddBackdrop = document.getElementById('modalAddBackdrop');
+const modalLiquidationBackdrop = document.getElementById('modalLiquidationBackdrop');
+const modalPaymentLogsBackdrop = document.getElementById('modalPaymentLogsBackdrop');
+const modalDashboardBackdrop = document.getElementById('modalDashboardBackdrop'); // NEW
+const clientTallyTbody = document.getElementById('clientTallyTbody');
+
+
+function getStatusClass(status, nextDue, fee) {
+    if (status === 'Terminated') return 'status-terminated';
+    const nextDueDt = new Date(nextDue + 'T00:00:00');
+    const now = new Date();
+    const billingDay = FIXED_BILLING_DAY;
+    const isOverdue = nextDueDt < now && now.getDate() >= (billingDay + 1);
+    const isPenaltyPeriod = nextDueDt < now && now.getDate() >= (billingDay + 1) && now.getDate() <= (billingDay + 5);
+
+    if (isPenaltyPeriod || isOverdue) return 'status-penalty';
+    return 'status-active';
+}
+
+function renderAccounts(){
+  const q = (document.getElementById('search')?.value || '').toLowerCase().trim();
+  accountsTbody.innerHTML = '';
+  quickAccount.innerHTML = '';
+
+  let clientTally = [];
+
+  // 5. Account Manager - Separate Boxes Style
+  accounts.forEach((a, idx)=>{
+        const nextDueDt = new Date(a.nextDue + 'T00:00:00');
+    const now = new Date();
+    // Feature 1: Auto disconnect if date is 26th or later (20 + 6)
+    if (a.status === 'Active' && now > nextDueDt && now.getDate() >= 26) {
+        a.status = 'Terminated';
+        saveAccounts();
+    }
+
+    const statusClass = getStatusClass(a.status, a.nextDue, a.plan.fee);
+
+    if(q){
+      const hay = `${a.accountNumber} ${a.name} ${a.address} ${a.plan.name}`.toLowerCase();
+      if(!hay.includes(q)) return;
+    }
+    recomputePointsAndBalance(a);
+
+    // Total Paid for Tally
+    const totalPaid = a.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+    clientTally.push({
+        accountNumber: a.accountNumber,
+        name: a.name,
+        totalPaid: totalPaid
+    });
+
+    const accountRow = document.createElement('tr');
+    accountRow.className = 'account-box-row';
+    accountRow.setAttribute('onclick', `openAccount(${idx})`);
+    accountRow.innerHTML = `
+        <td colspan="6" style="padding: 0; border: none;">
+            <div class="account-info-grid">
+                <div><span class="muted-label">Account #</span>${a.accountNumber}</div>
+                <div><span class="muted-label">Customer</span><span class="account-name">${a.name}</span></div>
+                <div><span class="muted-label">Plan (₱)</span><span class="plan-fee">${a.plan.name} — ₱${a.plan.fee}</span></div>
+                <div><span class="muted-label">Next Due</span>${new Date(a.nextDue).toLocaleDateString()}</div>
+                <div><span class="muted-label">Status</span><span class="${statusClass}">${a.status}</span></div>
+                <div style="text-align: center;"><span class="muted-label">Points</span><span class="badge">${(a.points.advance||0)+(a.points.ontime||0)-(a.points.lost||0)}</span></div>
+            </div>
+        </td>
+    `;
+    accountsTbody.appendChild(accountRow);
+
+
+    const opt = document.createElement('option'); opt.value = idx; opt.textContent = `${a.accountNumber} — ${a.name}`; quickAccount.appendChild(opt);
+  });
+  renderPaymentAnalysis();
+  renderClientTally(clientTally);
+}
+
+function renderClientTally(clientTally) {
+    clientTally.sort((a, b) => b.totalPaid - a.totalPaid);
+
+    clientTallyTbody.innerHTML = '';
+
+    clientTally.forEach((client, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${index + 1}</td>
+            <td>${client.accountNumber}</td>
+            <td>${client.name}</td>
+            <td style="text-align:right">₱${client.totalPaid.toFixed(2)}</td>`;
+        clientTallyTbody.appendChild(tr);
+    });
+}
+
+function recomputePointsAndBalance(acc){
+  const originalPoints = {advance:0, ontime:0, lost:0};
+  let currentBalance = 0;
+
+  acc.points = {advance:0, ontime:0, lost:0};
+  
+  // Ensure arrays exist
+  acc.charges = acc.charges || []; 
+  acc.discounts = acc.discounts || [];
+
+  // 1. Process Extra Charges (Adds to debt)
+  acc.charges.forEach(c => {
+      currentBalance -= Number(c.amount); 
+  });
+
+  // 2. Process Discounts (Reduces debt/Adds to credits)
+  acc.discounts.forEach(d => {
+      currentBalance += Number(d.amount);
+  });
+
+  // 3. Process Payments & Monthly Fees
+  acc.payments.forEach(p=>{
+    const d = new Date(p.date + 'T00:00:00').getDate();
+    const planFee = acc.plan.fee;
+    
+    // SNAPSHOT: Balance BEFORE this payment
+    p.excessLackingBalanceBefore = currentBalance;
+    
+    // LOGIC: Calculate how many future months were covered by the PREVIOUS balance
+    // We use Math.max(0, ...) because we don't count negative balance as "negative months covered"
+    const monthsCoveredBefore = Math.floor(Math.max(0, currentBalance) / planFee);
+
+    // Apply the Payment
+    const grossPayment = Number(p.amount || 0);
+    let amountToApply = grossPayment + currentBalance;
+
+    // Surcharge Logic (21st-25th)
+    let surcharge = 0;
+    if(d >= 21 && d <= 25){
+      surcharge = Math.round(planFee * 0.10);
+      acc.points.lost = (acc.points.lost||0) + 1;
+    }
+    p.surchargeApplied = surcharge;
+
+    // Discount Logic
+    let feeAdjustment = 0;
+    if (acc.points.advance >= 12) {
+      feeAdjustment = planFee;
+      acc.points.advance -= 12;
+    } else if (acc.points.ontime >= 12) {
+      feeAdjustment = planFee * 0.50;
+      acc.points.ontime -= 12;
+    }
+    p.discountApplied = feeAdjustment;
+
+    // Calculate Bill for THIS month
+    let amountDueThisMonth = planFee - feeAdjustment + surcharge;
+    
+    // Handle Reconnection special case
+    let finalAmountDue = (p.type === 'reconnect') ? p.appliedTotal : amountDueThisMonth;
+
+    // --- 1. BASE POINT CALCULATION (For the Current Month) ---
+    // Check if the total money available (Old Bal + New Pay) is enough to cover THIS month
+    // "If she pay 600... grant 1 point ontime... no points for next month"
+    if (amountToApply >= finalAmountDue) {
+        // Grant point based on date
+        if(d >= 1 && d <= 19) acc.points.advance++;
+        else if(d === 20) acc.points.ontime++;
+    }
+
+    // Update the Running Balance (Deduct this month's fee)
+    currentBalance = amountToApply - finalAmountDue;
+    
+    p.balanceApplied = currentBalance;
+    p.appliedTotal = finalAmountDue;
+    if (!p.referenceNumber) p.referenceNumber = generateRefNumber(acc.accountNumber, p.date);
+
+    // --- 2. EXTRA ADVANCE POINTS CALCULATION (For Future Months) ---
+    // "5000 - 500 = 4500... next 9 months covered... 9 points"
+    // "2200 - 500 = 1700... next 3 months covered... 3 points"
+    
+    // Calculate how many future months are covered NOW
+    const monthsCoveredAfter = Math.floor(Math.max(0, currentBalance) / planFee);
+
+    // Calculate the difference (Did we gain coverage?)
+    // This prevents double-counting if they already had a huge balance
+    const extraPoints = monthsCoveredAfter - monthsCoveredBefore;
+
+    if (extraPoints > 0) {
+        acc.points.advance += extraPoints;
+    }
+    // Note: If extraPoints is 0 or negative (consuming balance), we don't add points.
+
+  });
+
+  acc.excessLackingBalance = currentBalance;
+
+  // AUTO-FREEZE LOGIC
+  const now = new Date();
+  const nextDueDt = new Date(acc.nextDue + 'T00:00:00');
+  if (acc.status === 'Active' && now > nextDueDt && now.getDate() >= 26) {
+      if(acc.excessLackingBalance < 0) {
+          acc.status = 'Terminated';
+      }
+  }
+}
+
+
+
+
+
+/* =========================
+   MODALS & INTERACTIONS
+   ========================= */
+
+// --- NEW FOOTER NAV ---
+const navBtns = document.querySelectorAll('#fixedNavFooter button');
+function clearActiveNav() {
+    navBtns.forEach(btn => btn.classList.remove('active'));
+}
+
+document.getElementById('navBtnAccounts').onclick = () => {
+  renderAccounts();
+  document.getElementById('search').value = '';
+  modalAccountManagerBackdrop.style.display = 'flex';
+  clearActiveNav();
+  document.getElementById('navBtnAccounts').classList.add('active');
+};
+document.getElementById('navBtnDashboard').onclick = () => {
+    modalDashboardBackdrop.style.display = 'flex';
+    clearActiveNav();
+    document.getElementById('navBtnDashboard').classList.add('active');
+};
+document.getElementById('navBtnSettings').onclick = () => {
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    document.getElementById('adminFullName').value = authState.fullName;
+    document.getElementById('adminSecretCode').value = authState.secretCode;
+    modalSettingsBackdrop.style.display = 'flex';
+    clearActiveNav();
+    document.getElementById('navBtnSettings').classList.add('active');
+};
+
+/* =========================
+   PLAN MANAGER LOGIC
+   ========================= */
+function renderSettingsPlans() {
+    const container = document.getElementById('settingsPlanList');
+    if(!container) return; // Guard clause
+    container.innerHTML = '';
+    
+    systemPlans.forEach((plan, index) => {
+        const div = document.createElement('div');
+        div.className = 'settings-plan-item';
+        div.innerHTML = `
+            <div>
+                <div style="font-weight:700;">${plan.name}</div>
+                <div class="muted" style="font-size:11px;">${plan.speed} | ₱${plan.fee}/mo</div>
+                <div style="font-size:10px; color:var(--accent-2);">Install: ₱${plan.install}</div>
+            </div>
+            <button class="small ghost" style="color:red; border-color:red;" onclick="deleteSystemPlan(${index})">Delete</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+window.deleteSystemPlan = function(index) {
+    if(confirm('Delete this plan configuration?')) {
+        systemPlans.splice(index, 1);
+        saveSystemPlans();
+        renderSettingsPlans();
+    }
+}
+
+document.getElementById('btnAddSystemPlan').onclick = () => {
+    const name = document.getElementById('newPlanName').value;
+    const speed = document.getElementById('newPlanSpeed').value;
+    const fee = Number(document.getElementById('newPlanFee').value);
+    const install = Number(document.getElementById('newPlanInstall').value);
+    
+    if(!name || !speed || !fee || !install) return showToast('Fill all fields', 'error');
+    
+    systemPlans.push({ id: Date.now(), name, fee, speed, install });
+    saveSystemPlans();
+    renderSettingsPlans();
+    
+    document.getElementById('newPlanName').value = '';
+    document.getElementById('newPlanSpeed').value = '';
+    document.getElementById('newPlanFee').value = '';
+    document.getElementById('newPlanInstall').value = '';
+    showToast('Plan added!', 'success');
+};
+
+// UPDATE SETTINGS BUTTON TO LOAD PLANS
+const oldSettingsClick = document.getElementById('navBtnSettings').onclick; // Keep reference to old logic if needed
+document.getElementById('navBtnSettings').onclick = () => {
+    // Reset fields
+    document.getElementById('currentPassword').value = ''; 
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    
+    modalSettingsBackdrop.style.display = 'flex';
+    clearActiveNav();
+    document.getElementById('navBtnSettings').classList.add('active');
+    
+    // Render Plans
+    renderSettingsPlans(); 
+};
+
+
+// --- NEW DASHBOARD MODAL ---
+document.getElementById('closeDashboard').onclick = () => {
+    modalDashboardBackdrop.style.display = 'none';
+    clearActiveNav();
+};
+document.getElementById('dashBtnQuickPay').onclick = () => {
+    modalDashboardBackdrop.style.display = 'none';
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('quickDate').value = today;
+    if(accounts.length > 0) {
+       const defaultIdx = Number(document.getElementById('quickAccount').value) || 0;
+       document.getElementById('quickAmount').value = accounts[defaultIdx]?.plan.fee || 0;
+    }
+    modalQuickPayBackdrop.style.display='flex';
+};
+document.getElementById('dashBtnLiquidation').onclick = () => {
+    modalDashboardBackdrop.style.display = 'none';
+    const today = new Date().toISOString().slice(0, 7);
+    document.getElementById('liquidationMonth').value = today;
+    renderLiquidation();
+    modalLiquidationBackdrop.style.display = 'flex';
+};
+document.getElementById('dashBtnPaymentLogs').onclick = () => {
+    modalDashboardBackdrop.style.display = 'none';
+    const today = new Date().toISOString().slice(0, 7);
+    document.getElementById('logsMonthFilter').value = today;
+    renderPaymentLogs();
+    modalPaymentLogsBackdrop.style.display = 'flex';
+};
+
+
+// --- MODAL CLOSURES (All of them) ---
+document.getElementById('closeAccountManager').onclick = () => { modalAccountManagerBackdrop.style.display = 'none'; clearActiveNav(); };
+document.getElementById('btnCloseAccount').onclick = ()=>{ modalAccountBackdrop.style.display='none'; activeAccountIndex=null; saveAccounts(); renderAccounts(); };
+document.getElementById('closeQuickPay').onclick = ()=> modalQuickPayBackdrop.style.display='none';
+document.getElementById('closePay').onclick = ()=> modalPayBackdrop.style.display='none';
+document.getElementById('closeLiquidation').onclick = ()=> modalLiquidationBackdrop.style.display='none';
+document.getElementById('closePaymentLogs').onclick = ()=> modalPaymentLogsBackdrop.style.display='none';
+document.getElementById('closeAdd').onclick = ()=> modalAddBackdrop.style.display='none';
+
+function openAccount(idx){
+  activeAccountIndex = idx;
+  const a = accounts[idx];
+
+  recomputePointsAndBalance(a);
+
+  document.getElementById('accTitle').textContent = `${a.accountNumber} — ${a.name}`;
+  document.getElementById('accNumber').textContent = a.accountNumber;
+  document.getElementById('accName').textContent = a.name;
+  document.getElementById('accAddress').textContent = a.address;
+  document.getElementById('accContact').textContent = a.contact;
+  document.getElementById('accMessengerId').textContent = a.messengerId || '—';
+  document.getElementById('accPlan').textContent = `${a.plan.name}`;
+  document.getElementById('accFee').textContent = `₱${a.plan.fee}`;
+  document.getElementById('accSpeed').textContent = `${a.plan.speed}`;
+  document.getElementById('accBilling').textContent = `Every ${FIXED_BILLING_DAY}th`;
+  document.getElementById('accStatus').textContent = a.status;
+  document.getElementById('accStatus').className = getStatusClass(a.status, a.nextDue, a.plan.fee);
+  document.getElementById('accPPPoE').textContent = a.pppoeUsername ? a.pppoeUsername : '—';
+  document.getElementById('accPPPass').textContent = a.pppoePassword ? a.pppoePassword : '—';
+  document.getElementById('accPPPass').style.filter = 'blur(6px)';
+  document.getElementById('togglePass').textContent = 'Show';
+
+
+  document.getElementById('accAdvancePoints').textContent = a.points.advance;
+  document.getElementById('accOnTimePoints').textContent = a.points.ontime;
+  document.getElementById('accLostPoints').textContent = a.points.lost;
+  document.getElementById('accNextDue').textContent = new Date(a.nextDue).toLocaleDateString();
+
+  const balanceEl = document.getElementById('accBalanceAmount');
+  balanceEl.textContent = `₱${a.excessLackingBalance.toFixed(2)}`;
+  balanceEl.style.color = a.excessLackingBalance >= 0 ? 'var(--accent-2)' : 'red';
+  balanceEl.style.textShadow = a.excessLackingBalance >= 0 ? 'var(--glow)' : '0 0 3px rgba(255, 0, 0, 0.3)';
+
+    // --- START NEW TRANSACTION TABLE LOGIC ---
+  const paymentsTbody = document.getElementById('paymentsTbody');
+  paymentsTbody.innerHTML = '';
+
+  // 1. Create a merged list of all transactions
+  let allTransactions = [];
+
+  // Add Payments
+  a.payments.forEach((p, i) => {
+      allTransactions.push({ 
+          type: 'payment', 
+          date: p.date, 
+          amount: p.amount, 
+          note: p.note, 
+          ref: p.referenceNumber, 
+          originalIndex: i, // Keep track of original index for deletion
+          obj: p 
+      });
+  });
+
+  // Add Charges (Hardware, Labor, Reconnection)
+  if(a.charges) {
+      a.charges.forEach((c, i) => {
+          allTransactions.push({ 
+              type: 'charge', 
+              date: c.date, 
+              amount: c.amount, 
+              note: c.note || 'Extra Charge', 
+              ref: 'CHARGE', 
+              originalIndex: i 
+          });
+      });
+  }
+
+  // Add Discounts
+  if(a.discounts) {
+      a.discounts.forEach((d, i) => {
+          allTransactions.push({ 
+              type: 'discount', 
+              date: d.date, 
+              amount: d.amount, 
+              note: d.note || 'Discount', 
+              ref: d.ref || 'PROMO', 
+              originalIndex: i 
+          });
+      });
+  }
+
+  // 2. Sort by Date (Newest first)
+  allTransactions.sort((x, y) => new Date(y.date) - new Date(x.date));
+
+  // 3. Render the Unified Table
+  allTransactions.forEach((t) => {
+      const tr = document.createElement('tr');
+      tr.className = 'txn-row'; // The box style
+      
+      let amountDisplay = '';
+      let typeLabel = '';
+      let rowClass = '';
+
+      // Determine Styles based on Type
+      if(t.type === 'payment') {
+          rowClass = 'txn-positive';
+          typeLabel = '<span class="badge" style="background:var(--accent);">Payment</span>';
+          amountDisplay = `₱${Number(t.amount).toFixed(2)}`;
+      } 
+      else if(t.type === 'discount') {
+          rowClass = 'txn-positive';
+          typeLabel = '<span class="badge" style="background:var(--toast-success);">Discount</span>';
+          amountDisplay = `+ ₱${Number(t.amount).toFixed(2)}`; // Plus means good for client
+      } 
+      else if(t.type === 'charge') {
+          rowClass = 'txn-negative';
+          typeLabel = '<span class="badge" style="background:var(--toast-error);">Charge</span>';
+          amountDisplay = `- ₱${Number(t.amount).toFixed(2)}`; // Minus means adds to debt
+      }
+
+      tr.classList.add(rowClass);
+
+      // Special column for Payment-specific details (Penalty/Balance)
+      let detailsCol = '';
+      if(t.type === 'payment') {
+          const p = t.obj;
+          detailsCol = `
+            ${p.surchargeApplied > 0 ? `<div style="color:red; font-size:11px;">+₱${p.surchargeApplied} Penalty</div>` : ''} 
+            ${p.balanceApplied != p.amount ? `<div style="color:#666; font-size:11px;">Bal: ₱${p.balanceApplied.toFixed(2)}</div>` : ''}
+          `;
+      } else {
+          detailsCol = `<span class="muted" style="font-size:11px;">${t.type.toUpperCase()} ADJUSTMENT</span>`;
+      }
+
+      tr.innerHTML = `
+          <td>${new Date(t.date).toLocaleDateString()}</td>
+          <td>${typeLabel}<br><span style="font-size:10px;">${t.ref}</span></td>
+          <td style="font-weight:700; font-size:15px;">${amountDisplay}</td>
+          <td>${t.note}</td>
+          <td>${detailsCol}</td>
+          <td>${t.type === 'payment' ? '₱'+(t.obj.appliedTotal||t.amount).toFixed(2) : '-'}</td>
+          <td class="no-print">
+            <button class="small ghost" style="color:red; border-color:red;" 
+                onclick="event.stopPropagation(); deleteTransaction(${activeAccountIndex}, '${t.type}', ${t.originalIndex})">
+                🗑️
+            </button>
+          </td>
+      `;
+      paymentsTbody.appendChild(tr);
+  });
+
+  // init calendar to this month
+  const now = new Date();
+  calMonth = now.getMonth(); calYear = now.getFullYear();
+  renderCalendar();
+
+  // Set view to default (not edit)
+  document.getElementById('accEdit').style.display='none';
+  document.getElementById('accView').style.display='block';
+  
+  // --- NEW: Populate edit form client fields ---
+  document.getElementById('editClientUsername').value = a.clientUsername || '';
+  document.getElementById('editClientPassword').value = a.clientPassword || '';
+  // --- END NEW ---
+
+  modalAccountBackdrop.style.display = 'flex';
+}
+
+document.getElementById('togglePass').onclick = ()=>{
+  const el = document.getElementById('accPPPass');
+  if(el.style.filter === 'none'){ el.style.filter='blur(6px)'; document.getElementById('togglePass').textContent='Show'; }
+  else { el.style.filter='none'; document.getElementById('togglePass').textContent='Hide'; }
+};
+
+// --- ACCOUNT DETAIL BUTTONS (Edit/Save/Cancel) ---
+document.getElementById('btnEditAccount').onclick = ()=>{
+  const a = accounts[activeAccountIndex];
+  document.getElementById('editName').value = a.name;
+  document.getElementById('editAddress').value = a.address;
+  document.getElementById('editContact').value = a.contact;
+  document.getElementById('editMessengerId').value = a.messengerId;
+  document.getElementById('editPlan').value = `${a.plan.name}|${a.plan.fee}|${a.plan.speed}`;
+  document.getElementById('editBillingDay').value = FIXED_BILLING_DAY;
+  document.getElementById('editStatus').value = a.status;
+  document.getElementById('editPPUser').value = a.pppoeUsername;
+  document.getElementById('editPPPass').value = a.pppoePassword;
+  document.getElementById('accView').style.display='none';
+  document.getElementById('accEdit').style.display='block';
+};
+document.getElementById('btnCancelEdit').onclick = ()=>{
+  document.getElementById('accEdit').style.display='none';
+  document.getElementById('accView').style.display='block';
+};
+document.getElementById('btnSaveAccount').onclick = ()=>{
+  const a = accounts[activeAccountIndex];
+  a.name = document.getElementById('editName').value;
+  a.address = document.getElementById('editAddress').value;
+  a.contact = document.getElementById('editContact').value;
+  a.messengerId = document.getElementById('editMessengerId').value.trim();
+  const v = document.getElementById('editPlan').value.split('|');
+  a.plan = {name:v[0], fee:Number(v[1]), speed:v[2]};
+  a.billingDay = FIXED_BILLING_DAY;
+  document.getElementById('editBillingDay').value = FIXED_BILLING_DAY;
+  a.status = document.getElementById('editStatus').value;
+  a.pppoeUsername = document.getElementById('editPPUser').value;
+  a.pppoePassword = document.getElementById('editPPPass').value;
+  
+  // --- NEW ---
+  a.clientUsername = document.getElementById('editClientUsername').value.trim();
+  a.clientPassword = document.getElementById('editClientPassword').value;
+  // --- END NEW ---
+
+  const lastPayDate = a.payments.length>0 ? a.payments[a.payments.length-1].date : null;
+  a.nextDue = computeNextDue(lastPayDate, a.billingDay);
+  saveAccounts(); showToast('Account updated successfully.', 'success'); renderAccounts(); openAccount(activeAccountIndex);
+};
+
+
+// --- PAYMENT ACTIONS ---
+document.getElementById('btnAddPayment').onclick = ()=>{
+  const a = accounts[activeAccountIndex];
+  document.getElementById('payAccName').textContent = `${a.accountNumber} — ${a.name}`;
+  document.getElementById('payAmount').value = a.plan.fee;
+  document.getElementById('payDate').valueAsDate = new Date();
+  document.getElementById('payNote').value = '';
+  modalPayBackdrop.style.display='flex';
+};
+document.getElementById('savePay').onclick = ()=>{
+  const a = accounts[activeAccountIndex];
+  const amt = Number(document.getElementById('payAmount').value);
+  const date = document.getElementById('payDate').value;
+  const note = document.getElementById('payNote').value;
+  if(!date || amt <= 0){ showToast('Enter amount and date', 'error'); return; }
+
+  applyPaymentToAccount(a, {date, amount:amt, note});
+
+  saveAccounts(); modalPayBackdrop.style.display='none'; showToast('Payment added successfully.', 'success'); renderAccounts(); openAccount(activeAccountIndex);
+};
+
+function applyPaymentToAccount(acc, payment){
+    payment.amount = Number(payment.amount || 0);
+    payment.referenceNumber = generateRefNumber(acc.accountNumber, payment.date);
+    acc.payments.push(payment);
+
+    recomputePointsAndBalance(acc);
+
+    acc.nextDue = computeNextDue(payment.date, FIXED_BILLING_DAY);
+    if(acc.status !== 'Active') acc.status = 'Active';
+
+    saveAccounts();
+}
+
+
+async function deletePayment(accIdx, payIdx){
+    const shouldDelete = await customConfirm('Delete this payment? This will re-calculate all subsequent payments/points.');
+    if (!shouldDelete) return;
+
+    accounts[accIdx].payments.splice(payIdx,1);
+    recomputePointsAndBalance(accounts[accIdx]);
+    const lastPayDate = accounts[accIdx].payments.length > 0 ? accounts[accIdx].payments[accounts[accIdx].payments.length-1].date : null;
+    accounts[accIdx].nextDue = computeNextDue(lastPayDate, FIXED_BILLING_DAY);
+    saveAccounts(); showToast('Payment deleted. Accounts re-calculated.', 'warning'); renderAccounts(); if(activeAccountIndex===accIdx) openAccount(accIdx);
+}
+
+// suspend / terminate / reconnect
+document.getElementById('btnSuspend').onclick = ()=>{
+  if(activeAccountIndex===null) return;
+  accounts[activeAccountIndex].status = 'Suspended';
+  saveAccounts(); showToast('Account suspended.', 'warning'); openAccount(activeAccountIndex); renderAccounts();
+};
+document.getElementById('btnTerminate').onclick = async ()=>{
+  if(activeAccountIndex===null) return;
+  const shouldTerminate = await customConfirm('Are you sure you want to TERMINATE this account? This will permanently disable service.');
+  if(!shouldTerminate) return;
+  accounts[activeAccountIndex].status = 'Terminated';
+  saveAccounts(); showToast('Account terminated.', 'error'); openAccount(activeAccountIndex); renderAccounts();
+};
+
+document.getElementById('btnReconnect').onclick = async () => {
+  if(activeAccountIndex === null) return;
+  
+  // 1. Confirm Reconnection
+  const confirmReconnect = await customConfirm(
+      "Reconnect this account? This will set status to ACTIVE.", 
+      "⚡ Reconnection"
+  );
+  
+  if(!confirmReconnect) return;
+
+  const acc = accounts[activeAccountIndex];
+
+  // 2. Ask if we should charge a fee
+  const chargeFee = await customConfirm(
+      "Do you want to add a standard Reconnection Fee (₱150)?", 
+      "💰 Apply Charge?"
+  );
+
+  if (chargeFee) {
+      // Auto-add the charge record
+      if(!acc.charges) acc.charges = [];
+      acc.charges.push({
+          date: new Date().toISOString().slice(0,10),
+          note: "Reconnection Fee", // description
+          amount: 150 // Amount
+      });
+      showToast('Reconnection Fee (₱150) added.', 'success');
+  }
+
+  // 3. Update Status
+  acc.status = 'Active';
+  
+  // 4. Save and Refresh
+  recomputePointsAndBalance(acc); // Recalculate totals
+  saveAccounts();
+  renderAccounts();
+  openAccount(activeAccountIndex); // Refresh the view
+  showToast('Account Reconnected Successfully!', 'success');
+};
+
+
+/* --- DELETE ACCOUNT FEATURE --- */
+document.getElementById('btnDeleteAccount').onclick = async () => {
+    if (activeAccountIndex === null) return;
+    const acc = accounts[activeAccountIndex];
+    const shouldDelete = await customConfirm(`ARE YOU SURE you want to permanently DELETE account ${acc.accountNumber} - ${acc.name}? This action cannot be undone.`, '🚨 DANGER: Delete Account');
+    if (shouldDelete) {
+        accounts.splice(activeAccountIndex, 1);
+        activeAccountIndex = null;
+        saveAccounts();
+        modalAccountBackdrop.style.display = 'none';
+        renderAccounts();
+        showToast('Account deleted successfully.', 'success');
+    }
+};
+
+/* export payments csv */
+document.getElementById('btnExportPayments').onclick = ()=>{
+    if(activeAccountIndex===null) return showToast('No account selected.', 'warning');
+    downloadAccountCSV(activeAccountIndex);
+    showToast('Payment history exported.', 'success');
+}
+function downloadAccountCSV(idx){
+  const acc = accounts[idx];
+  let rows = [['date','amount_paid','note','surcharge_applied','balance_remaining/excess']];
+  acc.payments.forEach(p=> rows.push([p.date,p.amount,p.note||'',p.surchargeApplied||0,p.balanceApplied||0]));
+  const csv = rows.map(r=> r.map(v=> `"${(''+v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `${acc.accountNumber}_payments.csv`; a.click(); URL.revokeObjectURL(url);
+}
+
+// --- ADD / IMPORT / EXPORT ---
+document.getElementById('btnAdd').onclick = ()=> {
+  document.getElementById('addTitle').textContent='Create Account';
+  document.getElementById('createAcc').style.display='inline-block';
+  const [accNum, pppUser] = autoGenerateAccountNumbers();
+  document.getElementById('newAccNumber').value = accNum;
+  document.getElementById('newAccPPPoE').value = pppUser;
+  document.getElementById('newAccName').value = '';
+  document.getElementById('newAccAddress').value = '';
+  document.getElementById('newAccContact').value = '';
+  document.getElementById('newAccMessengerId').value = '';
+  document.getElementById('newAccPPPass').value = '';
+  document.getElementById('newAccBillingDay').value = FIXED_BILLING_DAY;
+  modalAddBackdrop.style.display='flex';
+};
+
+function autoGenerateAccountNumbers() {
+    // 1. Filter accounts to find those matching the NR2021CxxxxA pattern
+    let maxNum = 0;
+
+    accounts.forEach(acc => {
+        // Regex looks for "NR2021C" followed by 4 digits, ending in "A"
+        const match = acc.accountNumber.match(/NR2021C(\d{4})A/); 
+        if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNum) maxNum = num;
+        }
+    });
+
+    // 2. Increment the highest number found
+    const nextNum = maxNum + 1;
+
+    // 3. Format it with padding (e.g., 1 -> 0001)
+    const paddedNum = String(nextNum).padStart(4, '0');
+    
+    // 4. Construct the ID
+    const newAccNum = `NR2021C${paddedNum}A`;
+    const newPPPUser = `C${paddedNum}A`; // Simplified PPPoE user based on ID
+
+    return [newAccNum, newPPPUser];
+}
+
+
+function autoGeneratePPPoEPass() {
+    const fullName = document.getElementById('newAccName').value.trim();
+    if (!fullName) {
+        document.getElementById('newAccPPPass').value = '';
+        return;
+    }
+    const parts = fullName.split(' ').filter(p => p.length > 0);
+    const surname = parts.length > 0 ? parts[parts.length - 1].toUpperCase() : '';
+    document.getElementById('newAccPPPass').value = surname;
+}
+
+// create
+document.getElementById('createAcc').onclick = ()=>{
+  const accNum = document.getElementById('newAccNumber').value.trim();
+  if(!accNum) return showToast('Account number required', 'error');
+  const name = document.getElementById('newAccName').value.trim() || 'Unknown';
+  if(!name) return showToast('Customer name required', 'error');
+  const addr = document.getElementById('newAccAddress').value.trim() || '';
+  const contact = document.getElementById('newAccContact').value.trim() || '';
+  const messengerId = document.getElementById('newAccMessengerId').value.trim() || '';
+  const [pname,pfee,pspeed] = document.getElementById('newAccPlan').value.split('|');
+  const billingDay = FIXED_BILLING_DAY;
+  const user = document.getElementById('newAccPPPoE').value.trim() || '';
+  const pass = document.getElementById('newAccPPPass').value.trim() || '';
+  const status = document.getElementById('newAccStatus').value || 'Active';
+  const acc = {
+    accountNumber: accNum, name, address: addr, contact, messengerId,
+    plan:{name:pname, fee:Number(pfee), speed:pspeed},
+    billingDay, status, pppoeUsername:user, pppoePassword:pass,
+    payments:[], points:{advance:0,ontime:0,lost:0}, nextDue: computeNextDue(null,billingDay),
+    excessLackingBalance: 0,
+    createdAt:new Date().toISOString()
+  };
+  accounts.push(acc); saveAccounts(); modalAddBackdrop.style.display='none'; showToast('Account created successfully.', 'success'); renderAccounts();
+};
+
+document.getElementById('btnExport').onclick = () => {
+    // 1. Prepare Data
+    const data = {
+        timestamp: new Date().toISOString(),
+        version: "3.5",
+        accounts: accounts,
+        settings: systemPlans,
+        logs: adminNotifications
+    };
+
+    // 2. Create Blob
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    
+    // 3. Generate Filename with Date
+    const date = new Date();
+    const dateString = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate()}`;
+    const fileName = `NRTECH_BACKUP_${dateString}.json`;
+
+    // 4. Trigger Direct Download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName; // Forces the filename
+    document.body.appendChild(a);
+    a.click();
+    
+    // 5. Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast(`Backup downloaded: ${fileName}`, 'success');
+};
+
+
+// --- IMPORT FROM CSV ---
+document.getElementById('btnImport').onclick = () => {
+    document.getElementById('fileImport').click();
+};
+
+document.getElementById('fileImport').onchange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // 1. Strict File Type Check
+    if (!file.name.endsWith('.csv')) {
+        showToast('Invalid file! Please upload a .csv file only.', 'error');
+        document.getElementById('fileImport').value = ''; // Reset input
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        importCSVProcess(text);
+    };
+    reader.readAsText(file);
+    document.getElementById('fileImport').value = ''; // Reset input
+};
+
+function importCSVProcess(csvText) {
+    const lines = csvText.split('\n');
+    let importedCount = 0;
+
+    // Regex to split CSV lines while respecting quotes (e.g. "City, Address")
+    const csvSplitRegex = /(?:,|^)(?:"([^"]*)"|([^",]*))/g;
+
+    // Start loop at i = 1 to skip the Header row
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        const cols = [];
+        let match;
+        // Reset regex state
+        csvSplitRegex.lastIndex = 0;
+        
+        while ((match = csvSplitRegex.exec(line)) !== null) {
+            // match[1] is quoted value, match[2] is unquoted value
+            let val = match[1] !== undefined ? match[1] : match[2];
+            // Unescape double quotes if present
+            val = val ? val.replace(/""/g, '"').trim() : ''; 
+            cols.push(val);
+        }
+
+        // Skip empty or malformed rows (needs at least Account Number and Name)
+        if(cols.length < 2) continue; 
+
+        // MAPPING: Ensure this matches the Export order
+        // 0: Acc#, 1: Name, 2: Addr, 3: Contact, 4: PlanName, 5: Fee, 6: Speed, 7: Status, 8: PPPUser, 9: PPPPass, 10: MessengerID
+
+        const newAcc = {
+            accountNumber: cols[0] || autoGenerateAccountNumbers()[0],
+            name: cols[1] || 'Unknown',
+            address: cols[2] || '',
+            contact: cols[3] || '',
+            plan: {
+                name: cols[4] || 'Basic',
+                fee: Number(cols[5]) || 499,
+                speed: cols[6] || 'Up to 10 Mbps'
+            },
+            billingDay: FIXED_BILLING_DAY,
+            status: cols[7] || 'Active',
+            pppoeUsername: cols[8] || '',
+            pppoePassword: cols[9] || '',
+            messengerId: cols[10] || '',
+            
+            // Default System Fields
+            payments: [],
+            points: { advance: 0, ontime: 0, lost: 0 },
+            nextDue: computeNextDue(null, FIXED_BILLING_DAY),
+            excessLackingBalance: 0,
+            createdAt: new Date().toISOString(),
+            clientUsername: '', // Defaults for imported data
+            clientPassword: ''
+        };
+
+        // Check if account already exists to avoid duplicates (Update existing or Skip)
+        const existingIndex = accounts.findIndex(a => a.accountNumber === newAcc.accountNumber);
+        
+        if (existingIndex === -1) {
+            // Create new
+            accounts.push(newAcc);
+            importedCount++;
+        } else {
+            // OPTIONAL: Update details of existing account from CSV, preserving payments
+            // Uncomment the lines below if you want the CSV to overwrite customer details but keep payment history
+            /*
+            newAcc.payments = accounts[existingIndex].payments;
+            newAcc.points = accounts[existingIndex].points;
+            newAcc.excessLackingBalance = accounts[existingIndex].excessLackingBalance;
+            newAcc.nextDue = accounts[existingIndex].nextDue;
+            accounts[existingIndex] = newAcc;
+            importedCount++; 
+            */
+        }
+    }
+
+    saveAccounts();
+    renderAccounts();
+    
+    if(importedCount > 0) {
+        showToast(`Successfully imported ${importedCount} clients from client.csv!`, 'success');
+    } else {
+        showToast('No new clients added. (Duplicates skipped or empty file).', 'warning');
+    }
+}
+
+
+/* =========================
+   QUICK PAYMENT MODAL LOGIC
+   ========================= */
+document.getElementById('quickAccount').onchange = ()=>{
+  const idx = Number(document.getElementById('quickAccount').value);
+  if(!Number.isNaN(idx) && accounts[idx]) {
+    document.getElementById('quickAmount').value = accounts[idx].plan.fee;
+  }
+};
+
+document.getElementById('btnQuickPay').onclick = ()=>{
+  const idx = Number(document.getElementById('quickAccount').value);
+  const amt = Number(document.getElementById('quickAmount').value);
+  const date = document.getElementById('quickDate').value;
+  if(Number.isNaN(idx) || !accounts[idx] || !date || amt<=0) return showToast('Choose account, date, and amount', 'error');
+  applyPaymentToAccount(accounts[idx], {date, amount:amt, note:'Quick Payment'});
+  saveAccounts(); renderAccounts(); modalQuickPayBackdrop.style.display='none'; showToast('Quick Payment added.', 'success');
+};
+
+/* =========================
+   CALENDAR VIEW
+   ========================= */
+function renderCalendar(){
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  if(activeAccountIndex===null) return;
+  const a = accounts[activeAccountIndex];
+  const first = new Date(calYear, calMonth, 1);
+  const month = calMonth, year = calYear;
+  const startDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  document.getElementById('calMonthLabel').textContent = first.toLocaleString(undefined, {month:'long', year:'numeric'});
+
+  // Add day labels (Sun, Mon, Tue, etc.)
+  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  dayLabels.forEach(label => {
+      const e = document.createElement('div');
+      e.className = 'cal-day';
+      e.style.backgroundColor = 'var(--panel-2)';
+      e.style.fontWeight = 'bold';
+      e.style.fontSize = '12px';
+      e.style.padding = '5px 4px';
+      e.style.minHeight = 'auto';
+      e.style.justifyContent = 'center';
+      e.style.alignItems = 'center';
+      e.innerHTML = `<div style="margin: 0;">${label}</div>`;
+      grid.appendChild(e);
+  });
+
+  // Empty placeholders for preceding days
+  for(let i=0;i<startDay;i++){
+      const e = document.createElement('div');
+      e.className='cal-day';
+      e.innerHTML='';
+      e.style.minHeight = '80px';
+      grid.appendChild(e);
+  }
+
+  // Day numbers and payment details
+  for(let d=1; d<=daysInMonth; d++){
+    const el = document.createElement('div'); el.className='cal-day';
+    el.innerHTML = `<div class="date">${d}</div>`;
+    const dateStr = new Date(year, month, d).toISOString().slice(0,10);
+    const pays = a.payments.filter(p=>p.date===dateStr);
+    pays.forEach(p=>{
+      const row = document.createElement('div'); row.style.marginTop='6px';
+      row.innerHTML = `<span class="payment-dot"></span><small>₱${Number(p.amount).toFixed(2)} ${p.note?'- '+p.note:''}</small>`;
+      el.appendChild(row);
+    });
+    grid.appendChild(el);
+  }
+}
+
+// --- CALENDAR NAVIGATION BUTTONS (FIXED) ---
+document.getElementById('calPrev').onclick = ()=>{
+  if(calMonth===0){ calMonth=11; calYear--; } else calMonth--;
+  renderCalendar();
+};
+document.getElementById('calNext').onclick = ()=>{
+  if(calMonth===11){ calMonth=0; calYear++; } else calMonth++;
+  renderCalendar();
+};
+
+/* =========================
+   LIQUIDATION LOGIC
+   ========================= */
+function renderLiquidation() {
+    const monthFilter = document.getElementById('liquidationMonth').value;
+    const tbody = document.getElementById('liquidationTbody');
+    tbody.innerHTML = '';
+
+    let grandTotalPaid = 0;
+    let grandTotalExtras = 0; // Charges - Discounts
+
+    accounts.forEach(acc => {
+        let totalPaid = 0;
+        let totalExtras = 0;
+
+        acc.payments.forEach(p => { if (p.date.startsWith(monthFilter)) totalPaid += p.amount; });
+        if(acc.charges) acc.charges.forEach(c => { if(c.date.startsWith(monthFilter)) totalExtras += c.amount; });
+        if(acc.discounts) acc.discounts.forEach(d => { if(d.date.startsWith(monthFilter)) totalExtras -= d.amount; });
+
+        if (totalPaid > 0 || totalExtras !== 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${monthFilter}</td>
+                <td>${acc.accountNumber}</td>
+                <td>${acc.name}</td>
+                <td style="text-align:right">₱${totalPaid.toFixed(2)}</td>
+                <td style="text-align:right; color: ${totalExtras > 0 ? 'red' : 'green'}">₱${totalExtras.toFixed(2)}</td>
+                <td style="text-align:right">₱${(totalPaid - totalExtras).toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+
+            grandTotalPaid += totalPaid;
+            grandTotalExtras += totalExtras;
+        }
+    });
+
+    document.getElementById('liquidationTotalPaid').textContent = `₱${grandTotalPaid.toFixed(2)}`;
+    document.getElementById('liquidationTotalNet').textContent = `₱${(grandTotalPaid - grandTotalExtras).toFixed(2)}`;
+}
+
+
+/* =========================
+   PAYMENT LOGS LOGIC
+   ========================= */
+function renderPaymentLogs() {
+    const monthFilter = document.getElementById('logsMonthFilter').value;
+    const tbody = document.getElementById('logsTbody');
+    tbody.innerHTML = '';
+
+    let allLogs = [];
+    accounts.forEach(acc => {
+        // Payments
+        acc.payments.forEach(p => {
+            if (p.date && p.date.startsWith(monthFilter)) {
+                allLogs.push({ date: p.date, type: 'Payment', desc: p.note || 'Regular Payment', amount: p.amount, acc: acc.accountNumber, name: acc.name, ref: p.referenceNumber });
+            }
+        });
+        // Charges
+        if(acc.charges) acc.charges.forEach(c => {
+             if (c.date && c.date.startsWith(monthFilter)) {
+                allLogs.push({ date: c.date, type: 'Charge', desc: c.note, amount: c.amount, acc: acc.accountNumber, name: acc.name, ref: 'N/A' });
+            }
+        });
+        // Discounts
+        if(acc.discounts) acc.discounts.forEach(d => {
+             if (d.date && d.date.startsWith(monthFilter)) {
+                allLogs.push({ date: d.date, type: 'Discount', desc: d.note, amount: -d.amount, acc: acc.accountNumber, name: acc.name, ref: d.ref });
+            }
+        });
+    });
+
+    allLogs.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    allLogs.forEach(log => {
+        const color = log.type === 'Discount' ? 'green' : (log.type === 'Charge' ? 'red' : 'black');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${log.date}</td>
+            <td>${log.acc}</td>
+            <td>${log.name}</td>
+            <td style="color:${color}">${log.type}</td>
+            <td>${log.desc}</td>
+            <td>${log.ref || ''}</td>
+            <td style="text-align:right; font-weight:700; color:${color}">₱${Math.abs(log.amount).toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('btnExportLogs').onclick = () => {
+    const monthFilter = document.getElementById('logsMonthFilter').value;
+    let rows = [['Date','Account #','Customer','Amount Paid','Note','Penalty/Excess Applied','Net Applied']];
+    accounts.forEach(acc => {
+        acc.payments.forEach(p => {
+            if (p.date && p.date.startsWith(monthFilter)) {
+                rows.push([
+                    p.date,
+                    acc.accountNumber,
+                    acc.name,
+                    p.amount,
+                    p.note || '',
+                    p.surchargeApplied || 0,
+                    p.appliedTotal || p.amount
+                ]);
+            }
+        });
+    });
+    const csv = rows.map(r=> r.map(v=> `"${(''+v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `payments_log_${monthFilter}.csv`; a.click(); URL.revokeObjectURL(url);
+    showToast(`Logs for ${monthFilter} exported.`, 'success');
+};
+
+/* =========================
+   PAYMENT ANALYSIS CHART (MODIFIED)
+   ========================= */
+function renderPaymentAnalysis() {
+    const monthsToShow = 6;
+    const today = new Date();
+    const monthlyData = {};
+    const labels = [];
+
+    // Initialize data structure for last 6 months
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const monthYear = date.toISOString().slice(0, 7);
+        labels.push(date.toLocaleString('default', { month: 'short', year: '2-digit' }));
+        monthlyData[monthYear] = { paid: 0, net: 0, penalties: 0 }; // Added penalties
+    }
+
+    accounts.forEach(acc => {
+        acc.payments.forEach(p => {
+            const monthKey = p.date.slice(0, 7);
+            if (monthlyData[monthKey]) {
+                monthlyData[monthKey].paid += p.amount;
+                const discount = p.discountApplied || 0;
+                const penalty = p.surchargeApplied || 0;
+                const netCollection = acc.plan.fee - discount + penalty;
+                monthlyData[monthKey].net += netCollection;
+                monthlyData[monthKey].penalties += penalty; // Track penalties
+            }
+        });
+    });
+
+    const paidData = labels.map((label, index) => {
+        const monthKey = new Date(today.getFullYear(), today.getMonth() - (monthsToShow - 1 - index), 1).toISOString().slice(0, 7);
+        return monthlyData[monthKey] ? monthlyData[monthKey].paid : 0;
+    });
+    const netData = labels.map((label, index) => {
+        const monthKey = new Date(today.getFullYear(), today.getMonth() - (monthsToShow - 1 - index), 1).toISOString().slice(0, 7);
+        return monthlyData[monthKey] ? monthlyData[monthKey].net : 0;
+    });
+    const penaltiesData = labels.map((label, index) => { // New data array
+        const monthKey = new Date(today.getFullYear(), today.getMonth() - (monthsToShow - 1 - index), 1).toISOString().slice(0, 7);
+        return monthlyData[monthKey] ? monthlyData[monthKey].penalties : 0;
+    });
+
+
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+
+    if (paymentAnalysisChart) {
+        paymentAnalysisChart.destroy();
+    }
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: 'var(--muted)',
+                    callback: function(value, index, ticks) {
+                        return '₱' + value.toLocaleString();
+                    }
+                },
+                grid: { color: 'var(--border)' }
+            },
+            x: {
+                ticks: { color: 'var(--muted)' },
+                grid: { display: false }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: { color: 'var(--text)' }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) { label += ': '; }
+                        if (context.parsed.y !== null) { label += '₱' + context.parsed.y.toLocaleString(); }
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    paymentAnalysisChart = new Chart(ctx, {
+        type: 'bar', // CHANGED to bar chart
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Total Paid (Gross)',
+                    data: paidData,
+                    backgroundColor: 'var(--toast-info)', // Use var
+                },
+                {
+                    label: 'Net Collection (Adjusted)',
+                    data: netData,
+                    backgroundColor: 'var(--accent-2)', // Use var
+                },
+                {
+                    label: 'Penalties Collected', // NEW Dataset
+                    data: penaltiesData,
+                    backgroundColor: 'var(--toast-error)', // Use var
+                }
+            ]
+        },
+        options: chartOptions
+    });
+}
+/* =========================
+   END PAYMENT ANALYSIS CHART
+   ========================= */
+
+/* =========================
+   PRINT / INVOICE (IMPROVED)
+   ========================= */
+document.getElementById('btnPrintInvoice').onclick = () => createAndPrintInvoice(false);
+document.getElementById('btnPrintReminderInvoice').onclick = () => createAndPrintInvoice(true);
+document.getElementById('btnSendMessenger').onclick = async () => {
+    const isReminder = await customConfirm("Send a Payment Reminder (OK) or Last Payment Confirmation (Cancel)?");
+    createAndSendMessengerInvoice(isReminder);
+};
+
+
+const GCASH_QR_PATH = 'gcash-qr.png';
+
+function createAndSendMessengerInvoice(isReminder = false) {
+    if (activeAccountIndex === null) return showToast('Please select an account first.', 'warning');
+    const acc = accounts[activeAccountIndex];
+
+    const htmlContent = generateInvoiceHtml(acc, isReminder);
+    const invContainer = document.getElementById('invoiceContent');
+    invContainer.innerHTML = htmlContent;
+
+    // Use HTML2Canvas to generate image
+    html2canvas(document.querySelector("#invoiceCapture"), { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+        // Requirement #7: Download to JPEG
+        const imageBase64 = canvas.toDataURL('image/jpeg', 0.9);
+        const link = document.createElement('a');
+        link.href = imageBase64;
+        link.download = `INVOICE_${acc.accountNumber}_${new Date().toISOString().slice(0,10)}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Open Messenger
+        if(acc.messengerId) {
+             const msg = isReminder ? "Here is your billing reminder." : "Here is your payment receipt.";
+             window.open(`https://m.me/${acc.messengerId}?text=${encodeURIComponent(msg)}`, '_blank');
+        } else {
+            showToast('Invoice Downloaded. Messenger ID not found.', 'success');
+        }
+        
+        // Requirement #7: Return to portal (Already here, just show confirmation)
+        showToast('Invoice saved! Returning to dashboard...', 'success');
+        
+    }).catch(err => {
+        console.error(err);
+        showToast('Error creating invoice image', 'error');
+    });
+}
+
+
+function generateInvoiceHtml(acc, isReminder = false) {
+    const lastPayment = acc.payments.length ? acc.payments[acc.payments.length - 1] : null;
+    const today = new Date();
+    
+    // --- 1. IDENTIFY CONTEXT (Receipt vs Reminder) ---
+    const displayDate = (!isReminder && lastPayment) 
+        ? new Date(lastPayment.date).toLocaleDateString() 
+        : today.toLocaleDateString();
+
+    const refNum = (!isReminder && lastPayment) 
+        ? (lastPayment.referenceNumber || "---")
+        : `BILL-${acc.accountNumber}-${today.getMonth()+1}${today.getDate()}`;
+
+    const planFee = acc.plan.fee;
+    
+    // --- 2. CALCULATE PREVIOUS BALANCE FOR DISPLAY ---
+    let prevBal = 0;
+
+    if (!isReminder && lastPayment) {
+        // [RECEIPT MODE]
+        // Use the snapshot we saved specifically for this moment
+        prevBal = lastPayment.excessLackingBalanceBefore || 0;
+    } else {
+        // [REMINDER MODE]
+        // The 'acc.excessLackingBalance' currently holds the Final Balance (Total Debt/Credit).
+        // Since the System already deducted the 'Plan Fee' for this month to get that Final Balance,
+        // We add the Plan Fee back to find out what the Previous Balance was.
+        
+        // Example: 
+        // Final Balance is -1500 (Lacking). Plan is 500.
+        // Previous Balance must have been -1000.
+        // Math: -1500 + 500 = -1000.
+        prevBal = acc.excessLackingBalance + planFee;
+        
+        // If the result is basically 0 (floating point fix), make it 0
+        if(Math.abs(prevBal) < 1) prevBal = 0;
+    }
+
+    // --- 3. DETERMINE LABEL & COLOR (Green for Excess, Red for Lacking) ---
+    let prevBalLabel = "Previous Balance";
+    let prevBalColor = "#333";
+    let prevBalText = "₱0.00";
+    let isExcess = false;
+
+    if (prevBal > 0) {
+        // POSITIVE = EXCESS (Money they left in the account)
+        isExcess = true;
+        prevBalLabel = "Less: Previous Excess";
+        prevBalColor = "green"; // Green means good (Credit)
+        prevBalText = `- ₱${Math.abs(prevBal).toFixed(2)}`; // Minus sign to show deduction
+    } else if (prevBal < 0) {
+        // NEGATIVE = LACKING (Money they still owe)
+        prevBalLabel = "Add: Previous Lacking";
+        prevBalColor = "red"; // Red means bad (Debt)
+        prevBalText = `+ ₱${Math.abs(prevBal).toFixed(2)}`; // Plus sign to show addition
+    }
+
+    // --- 4. CALCULATE TOTALS ---
+    const amountPaid = (!isReminder && lastPayment) ? Number(lastPayment.amount) : 0;
+    let totalAmountDisplay = 0;
+    let totalLabel = "";
+    
+    if(!isReminder && lastPayment) {
+        // RECEIPT: Total is what they paid just now
+        totalAmountDisplay = amountPaid;
+        totalLabel = "Amount Paid Now";
+    } else {
+        // REMINDER: Total is the current debt
+        // If balance is negative (lacking), show positive debt.
+        // If balance is positive (excess), they owe 0.
+        totalAmountDisplay = acc.excessLackingBalance < 0 ? Math.abs(acc.excessLackingBalance) : 0;
+        totalLabel = "Total Amount Due";
+    }
+
+    // Stamp Logic
+    const stampHtml = (!isReminder) ? `
+        <div class="paid-stamp">
+            PAID
+            <span class="stamp-date">${displayDate}</span>
+        </div>
+    ` : '';
+
+    const reminderNoteHtml = isReminder ? `
+        <div style="background: #fff0f0; border-left: 4px solid #d32f2f; padding: 10px; margin: 15px 0; color: #d32f2f; font-size: 11px;">
+            <strong>IMPORTANT:</strong> Please settle your balance to avoid disconnection.
+        </div>
+    ` : '';
+
+    // --- 5. GENERATE HTML ---
+    return `
+    <div id="invoiceCapture" class="invoice-clean">
+        
+        <div class="inv-header-clean">
+            <div class="inv-brand-col">
+                <img src="logo.png" alt="Logo">
+            </div>
+            <div class="inv-meta-col">
+                <div class="inv-meta-title">${isReminder ? 'Billing Statement' : 'Official Receipt'}</div>
+                <div><strong>Ref #:</strong> ${refNum}</div>
+                <div>${displayDate}</div>
+            </div>
+        </div>
+
+        <div class="inv-info-box">
+            <div class="inv-col">
+                <div class="inv-row-item"><span class="inv-label">Account:</span> ${acc.accountNumber}</div>
+                <div class="inv-row-item"><span class="inv-label">Customer:</span> ${acc.name}</div>
+                <div class="inv-row-item"><span class="inv-label">Address:</span> ${acc.address}</div>
+            </div>
+            <div class="inv-col" style="text-align:right;">
+                <div class="inv-row-item"><span class="inv-label">Plan:</span> ${acc.plan.name}</div>
+                <div class="inv-row-item"><span class="inv-label">Fee:</span> ₱${acc.plan.fee}</div>
+                <div class="inv-row-item"><span class="inv-label">Status:</span> ${acc.status}</div>
+            </div>
+        </div>
+
+        <div class="inv-points-bar">
+            <strong>Points Earned:</strong> 
+            Advance: ${acc.points.advance || 0} | 
+            On-Time: ${acc.points.ontime || 0}
+        </div>
+
+        <div style="position:relative; flex-grow: 1;">
+            ${stampHtml} 
+            <table class="inv-clean-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Current Month Service Fee</td>
+                        <td class="amount">₱${planFee.toFixed(2)}</td>
+                    </tr>
+                    
+                    ${prevBal !== 0 ? `
+                    <tr>
+                        <td style="color:${prevBalColor}; font-weight:600;">${prevBalLabel}</td>
+                        <td class="amount" style="color:${prevBalColor}; font-weight:600;">${prevBalText}</td>
+                    </tr>
+                    ` : ''}
+
+                    ${!isReminder ? `
+                    <tr>
+                        <td colspan="2" style="border-bottom: 2px dashed #ddd;"></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#666;">Cash Payment Received</td>
+                        <td class="amount" style="color:#666;">₱${amountPaid.toFixed(2)}</td>
+                    </tr>` : ''}
+                    
+                    <tr class="inv-total-row">
+                        <td>${totalLabel}</td>
+                        <td class="amount">₱${totalAmountDisplay.toFixed(2)}</td>
+                    </tr>
+
+                    ${!isReminder && acc.excessLackingBalance > 0 ? `
+                    <tr>
+                        <td style="color:green; font-size:12px; border:none; padding-top:10px;">
+                            <strong>Note:</strong> Remaining Excess Balance (Carried Forward)
+                        </td>
+                        <td class="amount" style="color:green; font-size:14px; border:none; padding-top:10px;">
+                            ₱${acc.excessLackingBalance.toFixed(2)}
+                        </td>
+                    </tr>
+                    ` : ''}
+
+                </tbody>
+            </table>
+        </div>
+
+        ${reminderNoteHtml}
+
+        <div class="inv-footer-clean">
+            <img src="gcash-qr.png" class="inv-qr" alt="QR Code">
+            <div style="font-weight:700; font-size:13px; margin-top:5px;">GCash: 09317926807</div>
+            <div class="inv-footer-text" style="margin-top:5px;">
+                Thank you for choosing N'RTECH Internet Services!
+            </div>
+        </div>
+
+    </div>
+    `;
+}
+
+
+
+
+function createAndPrintInvoice(isReminder = false) {
+    if (activeAccountIndex === null) return showToast('Please select an account first.', 'warning');
+    const acc = accounts[activeAccountIndex];
+    recomputePointsAndBalance(acc);
+
+    const html = generateInvoiceHtml(acc, isReminder);
+    // Note: We don't need to put it in 'invoiceContent' div for the print window method, 
+    // but we can leave it if used elsewhere.
+
+    const w = window.open('', '_blank');
+    w.document.write(`
+    <html>
+        <head>
+            <title>Print Receipt - ${acc.accountNumber}</title>
+            <style>
+                @media print {
+                    @page { margin: 0; size: auto; }
+                    body { margin: 0; padding: 20px; }
+                    /* Hide browser header/footers if possible */
+                }
+                body {
+                    font-family: 'Segoe UI', sans-serif;
+                    background: #fff;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                /* UPDATED INVOICE CSS FOR PRINTING */
+                .invoice-clean {
+                    width: 100%;
+                    max-width: 500px;
+                    background: #fff;
+                    color: #1a1a1a;
+                    padding: 25px;
+                    border: 2px dashed #d49a37; 
+                    
+                    /* AUTO HEIGHT FIXES */
+                    height: auto;
+                    min-height: fit-content;
+                    display: flex;
+                    flex-direction: column;
+                    box-sizing: border-box;
+                    
+                    position: relative;
+                    margin: 0 auto;
+                }
+                .inv-header-clean { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+                .inv-brand-col { display: flex; align-items: center; gap: 10px; }
+              .inv-brand-col img { height: 90px; width: auto; } 
+                .inv-meta-col { text-align: right; font-size: 11px; line-height: 1.4; color: #000; }
+                .inv-meta-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+
+                .inv-info-box { border: 1px dashed #d49a37; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 15px; background: #fff; }
+                .inv-col { width: 48%; }
+                .inv-row-item { margin-bottom: 4px; }
+                .inv-label { font-weight: 700; color: #000; }
+
+                .inv-points-bar { background: #fff8e1; border: 1px solid #faeacc; border-radius: 6px; padding: 8px 12px; font-size: 11px; font-weight: 600; color: #333; margin-bottom: 25px; border-left: 4px solid #d49a37; }
+
+                .inv-clean-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                .inv-clean-table th { text-align: left; font-weight: 700; padding: 8px 0; border-bottom: 3px solid #d49a37; font-size: 14px; color: #000; }
+                .inv-clean-table th:last-child { text-align: right; }
+                .inv-clean-table td { padding: 12px 0; font-size: 13px; border-bottom: 1px solid #eee; }
+                .inv-clean-table td.amount { text-align: right; }
+                .inv-total-row td { font-weight: 800; font-size: 18px; border-bottom: none; padding-top: 15px; color: #000; }
+
+                .paid-stamp { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); border: 3px solid #d49a37; color: #d49a37; font-size: 30px; font-weight: 900; padding: 5px 20px; text-transform: uppercase; opacity: 0.5; letter-spacing: 4px; pointer-events: none; z-index: 10; border-radius: 10px; text-align: center; background: rgba(255,255,255,0.7); }
+                .stamp-date { display: block; font-size: 12px; letter-spacing: 0; font-weight: 700; margin-top: -5px; }
+
+             .inv-footer-clean { 
+                    margin-top: 20px; 
+                    border-top: 1px dashed #d49a37; 
+                    padding-top: 15px; 
+                    text-align: center; 
+                    page-break-inside: avoid; /* Keeps footer together */
+                }
+                
+                .inv-qr { 
+                    width: 90px; 
+                    height: auto; 
+                    border: 2px solid #d49a37; 
+                    padding: 4px; 
+                    margin-bottom: 5px; 
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            </style>
+        </head>
+        <body>
+            ${html}
+            <script>
+                // Auto print and close
+                window.onload = function() {
+                    window.print();
+                    setTimeout(function(){ window.close(); }, 500);
+                }
+           
+        </body>
+    </html>`);
+    w.document.close();
+}
+
+
+
+/* =========================
+   INIT / UTIL
+   ========================= */
+function updateClock(){
+  // Update marquee content only
+  const marquee = document.getElementById('liveClock');
+  if (marquee) {
+    // 1. Added "N'RTECH INTERNET" to the marquee text
+    marquee.textContent = `N'RTECH INTERNET — ${new Date().toLocaleString()}`;
+  }
+}
+setInterval(updateClock, 1000); updateClock();
+
+function init(){
+  accounts.forEach(a => {
+      a.billingDay = FIXED_BILLING_DAY;
+      const lastPayDate = a.payments.length>0 ? a.payments[a.payments.length-1].date : null;
+      a.nextDue = computeNextDue(lastPayDate, FIXED_BILLING_DAY);
+  });
+  saveAccounts();
+  
+
+  renderAccounts();
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('quickDate').value = today;
+
+  if(accounts.length > 0 && document.getElementById('quickAccount').value) {
+      const initialAccIdx = Number(document.getElementById('quickAccount').value);
+      if(accounts[initialAccIdx]) {
+        document.getElementById('quickAmount').value = accounts[initialAccIdx].plan.fee;
+      }
+  }
+
+  renderPaymentAnalysis();  updatePendingClientsCount(); // Update counter on load  
+updatePendingUpgradesCount(); // Update counter on load
+
+  
+  resetAutoLogoutTimer();
+}
+
+
+// Check login state on load
+if (isLoggedIn()) {
+    setLoginState(true);
+    init();
+} else {
+    // Show login modal but don't call init yet
+    
+    document.getElementById('loginModalBackdrop').style.display = 'flex';
+}
+
+/* autosave before unload */
+window.addEventListener('beforeunload', ()=>{ saveAccounts(); saveAuthState(); });
+// A global list of all available plans for the upgrade feature
+const AVAILABLE_PLANS = [
+    { value: "Basic|499|Up to 10 Mbps", text: "Basic (₱499 / Up to 10 Mbps)" },
+    { value: "Family|699|Up to 15 Mbps", text: "Family (₱699 / Up to 15 Mbps)" },
+    { value: "Gamer|899|Up to 20 Mbps", text: "Gamer (₱899 / Up to 20 Mbps)" },
+    { value: "Premium|1099|Up to 25 Mbps", text: "Premium (₱1099 / Up to 25 Mbps)" },
+    { value: "Business|1299|Up to 30 Mbps", text: "Business/Ultimate (₱1299 / Up to 30 Mbps)" }
+];
+
+
+
+// --- DOM References for NEW Modals ---
+const modalRegisterBackdrop = document.getElementById('modalRegisterBackdrop');
+const modalPendingClientsBackdrop = document.getElementById('modalPendingClientsBackdrop');
+const modalClientPortalBackdrop = document.getElementById('modalClientPortalBackdrop');
+const modalGcashPaymentBackdrop = document.getElementById('modalGcashPaymentBackdrop');
+const pendingClientsTbody = document.getElementById('pendingClientsTbody');
+
+// --- Helper Functions ---
+function savePendingClients() {
+    localStorage.setItem(PENDING_CLIENTS_KEY, JSON.stringify(pendingClients));
+    updatePendingClientsCount();
+}
+
+function savePendingUpgrades() {
+    localStorage.setItem(PENDING_UPGRADES_KEY, JSON.stringify(pendingUpgrades));
+    updatePendingUpgradesCount();
+}
+
+function savePendingPayments() {
+    localStorage.setItem(PENDING_PAYMENTS_KEY, JSON.stringify(pendingPayments));
+}
+
+function updatePendingUpgradesCount() {
+    const count = pendingUpgrades ? pendingUpgrades.length : 0;
+    const el = document.getElementById('pendingUpgradesCount');
+    if(el) el.textContent = count;
+}
+
+function updatePendingClientsCount() {
+    const count = pendingClients ? pendingClients.length : 0;
+    const el = document.getElementById('pendingClientsCount');
+    if(el) el.textContent = count;
+}
+
+
+function approveUpgrade(idx) {
+    const req = pendingUpgrades[idx];
+    const acc = accounts.find(a => a.accountNumber === req.accountNumber);
+    
+    if (acc) {
+        const [pname, pfee, pspeed] = req.requestedPlanValue.split('|');
+        acc.plan = { name: pname, fee: Number(pfee), speed: pspeed };
+        saveAccounts();
+        
+        // If this client is currently logged in, refresh their portal view
+        if (activeClientAccount && activeClientAccount.accountNumber === req.accountNumber) {
+            showClientPortal(acc); 
+        }
+        
+        showToast(`Upgrade approved for ${acc.name}.`, 'success');
+    } else {
+        showToast(`Account ${req.accountNumber} not found.`, 'error');
+    }
+    
+    pendingUpgrades.splice(idx, 1);
+    savePendingUpgrades();
+    renderPendingUpgrades();
+    renderAccounts(); // Refresh main account list
+}
+
+function rejectUpgrade(idx) {
+    const req = pendingUpgrades[idx];
+    pendingUpgrades.splice(idx, 1);
+    savePendingUpgrades();
+    showToast(`Upgrade request for ${req.name} rejected.`, 'warning');
+    renderPendingUpgrades();
+}
+
+function savePendingPayments() {
+    localStorage.setItem(PENDING_PAYMENTS_KEY, JSON.stringify(pendingPayments));
+    // We can add a counter for this later if needed
+}
+function updatePendingClientsCount() {
+    document.getElementById('pendingClientsCount').textContent = pendingClients.length;
+}
+
+// --- Client Registration Logic ---
+document.getElementById('clientRegisterLink').onclick = (e) => {
+    e.preventDefault();
+    modalRegisterBackdrop.style.display = 'flex';
+};
+document.getElementById('closeRegister').onclick = () => {
+    modalRegisterBackdrop.style.display = 'none';
+};
+
+/* =========================
+   NEW REGISTRATION FLOW (VISUAL & PAYMENT)
+   ========================= */
+function renderRegistrationPlans() {
+    const container = document.getElementById('regPlanContainer');
+    container.innerHTML = '';
+    document.getElementById('regSelectedPlanIndex').value = '';
+    
+    systemPlans.forEach((plan, index) => {
+        const card = document.createElement('div');
+        card.className = 'plan-card';
+        card.innerHTML = `
+            <div class="plan-check">✔</div>
+            <h4>${plan.name}</h4>
+            <div class="speed">${plan.speed}</div>
+            <div class="price">₱${plan.fee}</div>
+            <div class="install-fee">Install: ₱${plan.install}</div>
+        `;
+        
+        card.onclick = () => {
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('regSelectedPlanIndex').value = index;
+        };
+        container.appendChild(card);
+    });
+}
+
+document.getElementById('btnRegNext').onclick = () => {
+    const idx = document.getElementById('regSelectedPlanIndex').value;
+    const name = document.getElementById('regFullName').value;
+    const user = document.getElementById('regUsername').value;
+    const pass = document.getElementById('regPassword').value;
+    
+    if(idx === '' || !name || !user || !pass) {
+        return showToast('Please select a plan and fill all fields.', 'error');
+    }
+    
+    const plan = systemPlans[idx];
+    
+    document.getElementById('payPlanName').textContent = plan.name;
+    document.getElementById('payPlanFee').textContent = `₱${plan.fee}`;
+    document.getElementById('payInstallFee').textContent = `₱${plan.install}`;
+    document.getElementById('payTotal').textContent = `₱${(plan.fee + plan.install).toFixed(2)}`;
+    
+    document.getElementById('regStep1').style.display = 'none';
+    document.getElementById('regStep2').style.display = 'block';
+};
+
+document.getElementById('btnRegBack').onclick = () => {
+    document.getElementById('regStep1').style.display = 'block';
+    document.getElementById('regStep2').style.display = 'none';
+};
+
+document.getElementById('btnSubmitApplication').onclick = () => {
+    const idx = document.getElementById('regSelectedPlanIndex').value;
+    const plan = systemPlans[idx];
+    const gcashRef = document.getElementById('regGcashRef').value;
+    
+    if(!gcashRef) return showToast('Please enter GCash Reference Number.', 'error');
+
+    const app = {
+        name: document.getElementById('regFullName').value.trim(),
+        address: document.getElementById('regAddress').value.trim(),
+        contact: document.getElementById('regContact').value.trim(),
+        plan: `${plan.name}|${plan.fee}|${plan.speed}`, 
+        installFee: plan.install,
+        username: document.getElementById('regUsername').value.trim(),
+        password: document.getElementById('regPassword').value,
+        paymentRef: gcashRef,
+        totalInitialPay: plan.fee + plan.install,
+        date: new Date().toISOString()
+    };
+
+    pendingClients.push(app);
+    savePendingClients();
+    
+    // NOTIFY ADMIN
+    pushNotification(
+        'alert', 
+        `New Application: ${app.name} - Paid ₱${app.totalInitialPay} (Ref: ${gcashRef})`, 
+        'viewPendingClients'
+    );
+    
+    showToast('Application & Payment submitted! Waiting for Admin verification.', 'success');
+    modalRegisterBackdrop.style.display = 'none';
+    
+    document.getElementById('regStep1').style.display = 'block';
+    document.getElementById('regStep2').style.display = 'none';
+    document.getElementById('regFullName').value = '';
+    document.getElementById('regGcashRef').value = '';
+};
+
+// Override the Link click
+document.getElementById('clientRegisterLink').onclick = (e) => {
+    e.preventDefault();
+    renderRegistrationPlans(); 
+    modalRegisterBackdrop.style.display = 'flex';
+};
+
+
+// --- Admin: Pending Client Approval Logic ---
+document.getElementById('btnViewPendingClients').onclick = () => {
+    renderPendingClients();
+    modalPendingClientsBackdrop.style.display = 'flex';
+};
+document.getElementById('closePendingClients').onclick = () => {
+// Admin: View/Close Upgrade Requests
+document.getElementById('btnViewUpgradeRequests').onclick = () => {
+    
+    modalUpgradeRequestsBackdrop.style.display = 'flex';
+};
+document.getElementById('closeUpgradeRequests').onclick = () => {
+    modalUpgradeRequestsBackdrop.style.display = 'none';
+};
+
+    modalPendingClientsBackdrop.style.display = 'none';
+};
+
+function renderPendingClients() {
+    pendingClientsTbody.innerHTML = '';
+    if (pendingClients.length === 0) {
+        pendingClientsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center;" class="muted">No pending applications.</td></tr>';
+    }
+    pendingClients.forEach((app, idx) => {
+        const [pname, pfee, pspeed] = app.plan.split('|');
+        const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>
+                <div style="font-weight:700">${app.name}</div>
+                <div class="muted" style="font-size:11px;">Paid: ₱${app.totalInitialPay || 0}</div>
+                <div class="muted" style="font-size:10px;">Ref: ${app.paymentRef || 'N/A'}</div>
+            </td>
+            <td>${app.contact}</td>
+            <td>${app.address}</td>
+            <td>${pname} (₱${pfee})</td>
+            <td class="no-print">
+                <button class="small" onclick="approveClient(${idx})">Verify & Approve</button>
+                <button class="small ghost" onclick="rejectClient(${idx})">Reject</button>
+            </td>
+        `;
+
+        pendingClientsTbody.appendChild(tr);
+    });
+    updatePendingClientsCount();
+}
+
+function approveClient(idx) {
+    const app = pendingClients[idx];
+    const [pname, pfee, pspeed] = app.plan.split('|');
+    const [accNum, pppUser] = autoGenerateAccountNumbers();
+    
+    // Auto-generate PPPoE password from surname
+    const nameParts = app.name.split(' ').filter(p => p.length > 0);
+    const pppPass = nameParts.length > 0 ? nameParts[nameParts.length - 1].toUpperCase() : '1234';
+
+    const newAcc = {
+        accountNumber: accNum,
+        name: app.name,
+        address: app.address,
+        contact: app.contact,
+        messengerId: '', // Admin can add this later
+        plan: { name: pname, fee: Number(pfee), speed: pspeed },
+        billingDay: FIXED_BILLING_DAY,
+        status: 'Active',
+        pppoeUsername: pppUser,
+        pppoePassword: pppPass,
+        payments: [],
+        points: { advance: 0, ontime: 0, lost: 0 },
+        nextDue: computeNextDue(null, FIXED_BILLING_DAY),
+        excessLackingBalance: 0,
+        createdAt: new Date().toISOString(),
+        // Add new client login fields
+        clientUsername: app.username,
+        clientPassword: app.password
+    };
+
+    accounts.push(newAcc);
+    saveAccounts();
+    
+    pendingClients.splice(idx, 1);
+    savePendingClients();
+    
+    showToast(`Client ${app.name} approved! Account ${accNum} created.`, 'success');
+    renderPendingClients();
+    renderAccounts(); // Refresh admin account list
+}
+
+function rejectClient(idx) {
+    const app = pendingClients[idx];
+    pendingClients.splice(idx, 1);
+    savePendingClients();
+    showToast(`Application for ${app.name} rejected.`, 'warning');
+    renderPendingClients();
+}
+
+
+// --- Login Mode Toggle Logic ---
+const btnToggleLoginMode = document.getElementById('btnToggleLoginMode');
+const loginTitle = loginModal.querySelector('h2');
+
+btnToggleLoginMode.onclick = () => {
+    isClientLoginMode = !isClientLoginMode;
+    if (isClientLoginMode) {
+        btnToggleLoginMode.textContent = 'Switch to Admin Login';
+        loginTitle.textContent = "N'RTECH Client Portal Login";
+        document.getElementById('forgotPasswordLink').style.display = 'none';
+        document.getElementById('clientRegisterLink').style.display = 'inline-block';
+    } else {
+        btnToggleLoginMode.textContent = 'Switch to Client Login';
+        loginTitle.textContent = "N'RTECH Billing Portal Login";
+        document.getElementById('forgotPasswordLink').style.display = 'inline-block';
+        document.getElementById('clientRegisterLink').style.display = 'inline-block';
+    }
+};
+
+// --- Client Portal Logic ---
+function showClientPortal(account) {
+    activeClientAccount = account;
+    
+    document.getElementById('clientPortalTitle').textContent = `Welcome, ${account.name.split(' ')[0]}!`;
+    document.getElementById('clientAccNumber').textContent = account.accountNumber;
+    document.getElementById('clientAccAddress').textContent = account.address;
+    document.getElementById('clientAccContact').textContent = account.contact;
+    document.getElementById('clientAccPlan').textContent = account.plan.name;
+    document.getElementById('clientAccFee').textContent = `₱${account.plan.fee.toFixed(2)}`;
+    document.getElementById('clientAccStatus').textContent = account.status;
+    document.getElementById('clientAccStatus').className = getStatusClass(account.status, account.nextDue, account.plan.fee);
+    document.getElementById('clientAccNextDue').textContent = new Date(account.nextDue).toLocaleDateString();
+
+    recomputePointsAndBalance(account); // Ensure balance is up-to-date
+    const balanceEl = document.getElementById('clientAccBalance');
+    
+    // --- FEATURE 2: Specific Balance Text ---
+    const balance = account.excessLackingBalance;
+    if (balance < 0) {
+        balanceEl.textContent = `Lacking: ₱${Math.abs(balance).toFixed(2)}`;
+        balanceEl.style.color = 'red';
+    } else if (balance > 0) {
+        balanceEl.textContent = `Excess: ₱${balance.toFixed(2)}`;
+        balanceEl.style.color = 'var(--accent-2)'; // Positive color
+    } else {
+        balanceEl.textContent = `Balanced: ₱0.00`;
+        balanceEl.style.color = 'var(--text)'; // Neutral color
+    }
+    // --- END FEATURE 2 ---
+        // --- FEATURE 3: Calculate Amount to be Paid ---
+    let feeAdjustment = 0;
+    // Check for 12-month point discounts
+    if (account.points.advance >= 12) {
+        feeAdjustment = account.plan.fee;
+    } else if (account.points.ontime >= 12) {
+        feeAdjustment = account.plan.fee * 0.50;
+    }
+    
+    const nextBillBaseFee = account.plan.fee - feeAdjustment;
+    let amountDue = nextBillBaseFee - account.excessLackingBalance;
+    
+    if (amountDue < 0) {
+        amountDue = 0; // You can't "pay" a negative amount
+    }
+    
+    const amountDueEl = document.getElementById('clientAccAmountDue');
+    amountDueEl.textContent = `₱${amountDue.toFixed(2)}`;
+    
+    if (feeAdjustment > 0) {
+        amountDueEl.innerHTML += ` <span class="badge" style="background: var(--toast-success); font-size: 10px;">Discount Applied!</span>`;
+    }
+    // --- END FEATURE 3 ---
+
+    renderClientPaymentHistory(account);
+        // --- Populate Upgrade Plan Dropdown ---
+    const currentPlanValue = `${account.plan.name}|${account.plan.fee}|${account.plan.speed}`;
+    document.getElementById('clientCurrentPlanName').textContent = `${account.plan.name} (₱${account.plan.fee})`;
+    
+    const upgradeSelect = document.getElementById('clientPlanUpgradeSelect');
+    upgradeSelect.innerHTML = ''; // Clear options
+    
+    AVAILABLE_PLANS.forEach(plan => {
+        // Only show plans that are *not* the current one
+        if (plan.value !== currentPlanValue) {
+            const opt = document.createElement('option');
+            opt.value = plan.value;
+            opt.textContent = plan.text;
+            // Optionally, select the next highest plan by default
+            if (plan.value.split('|')[1] > account.plan.fee) {
+                if (!upgradeSelect.value) {
+                    opt.selected = true;
+                }
+            }
+            upgradeSelect.appendChild(opt);
+        }
+    });
+
+    // Disable button if a request is pending
+    const pendingReq = pendingUpgrades.some(r => r.accountNumber === account.accountNumber);
+    document.getElementById('btnClientRequestUpgrade').disabled = pendingReq;
+    document.getElementById('btnClientRequestUpgrade').textContent = pendingReq ? 'Request Pending...' : 'Request Upgrade';
+
+    
+    modalClientPortalBackdrop.style.display = 'flex';
+}
+
+function renderClientPaymentHistory(account) {
+    const tbody = document.getElementById('clientPaymentsTbody');
+    tbody.innerHTML = '';
+    if (account.payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;" class="muted">No payments on record.</td></tr>';
+        return;
+    }
+    
+    account.payments.slice().reverse().forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${new Date(p.date + 'T00:00:00').toLocaleDateString()}</td>
+            <td>${p.referenceNumber || 'N/A'}</td>
+            <td>₱${Number(p.amount).toFixed(2)}</td>
+            <td>${p.note || ''}</td>
+            <td>₱${(p.surchargeApplied || 0).toFixed(2)}</td>
+            <td>₱${(p.appliedTotal || p.amount).toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('btnClientLogout').onclick = () => {
+    activeClientAccount = null;
+    localStorage.removeItem(CLIENT_LOGIN_KEY);
+    modalClientPortalBackdrop.style.display = 'none';
+    
+    // Reset login modal to admin
+    isClientLoginMode = false;
+    btnToggleLoginMode.textContent = 'Switch to Client Login';
+    loginTitle.textContent = "N'RTECH Billing Portal Login";
+    document.getElementById('forgotPasswordLink').style.display = 'inline-block';
+    
+    document.getElementById('loginModalBackdrop').style.display = 'flex';
+};
+
+// --- Client Payment (GCash) Modal Logic ---
+document.getElementById('btnClientPayNow').onclick = () => {
+    document.getElementById('clientGcashRef').value = '';
+    modalGcashPaymentBackdrop.style.display = 'flex';
+};
+document.getElementById('closeGcashPay').onclick = () => {
+    modalGcashPaymentBackdrop.style.display = 'none';
+};
+// Client Portal: Request Upgrade
+document.getElementById('btnClientRequestUpgrade').onclick = () => {
+    if (!activeClientAccount) return;
+
+    const select = document.getElementById('clientPlanUpgradeSelect');
+    const selectedValue = select.value;
+    const selectedText = select.options[select.selectedIndex].text;
+
+// Client Portal: Request Upgrade
+document.getElementById('btnClientRequestUpgrade').onclick = () => {
+    if (!activeClientAccount) return;
+
+    const select = document.getElementById('clientPlanUpgradeSelect');
+    const selectedValue = select.value;
+    const selectedText = select.options[select.selectedIndex].text;
+
+    const request = {
+        accountNumber: activeClientAccount.accountNumber,
+        name: activeClientAccount.name,
+        currentPlanName: activeClientAccount.plan.name,
+        requestedPlanName: selectedText,
+        requestedPlanValue: selectedValue
+    }; 
+    
+    // FIX: The function call is now HERE, outside the object
+    pushNotification('info', `Upgrade Request: ${activeClientAccount.name} wants ${selectedText}`, 'viewUpgrades');
+
+    // Check if a request already exists
+    if (pendingUpgrades.some(r => r.accountNumber === request.accountNumber)) {
+        return showToast('You already have a pending upgrade request.', 'warning');
+    }
+
+    pendingUpgrades.push(request);
+    savePendingUpgrades();
+    showToast('Upgrade request submitted for admin review!', 'success');
+    document.getElementById('btnClientRequestUpgrade').disabled = true;
+    document.getElementById('btnClientRequestUpgrade').textContent = 'Request Pending...';
+};
+
+    // Check if a request already exists
+    if (pendingUpgrades.some(r => r.accountNumber === request.accountNumber)) {
+        return showToast('You already have a pending upgrade request.', 'warning');
+    }
+
+    pendingUpgrades.push(request);
+    savePendingUpgrades();
+    showToast('Upgrade request submitted for admin review!', 'success');
+    document.getElementById('btnClientRequestUpgrade').disabled = true;
+    document.getElementById('btnClientRequestUpgrade').textContent = 'Request Pending...';
+};
+
+document.getElementById('btnSubmitGcashProof').onclick = () => {
+    const gcashRef = document.getElementById('clientGcashRef').value.trim();
+    if (!activeClientAccount) {
+        return showToast('Error: No active client account.', 'error');
+    }
+
+    const pendingPay = {
+        accountNumber: activeClientAccount.accountNumber,
+        name: activeClientAccount.name,
+        gcashRef: gcashRef || 'No Ref Provided',
+        dateSubmitted: new Date().toISOString()
+    };
+    
+    pendingPayments.push(pendingPay);
+    savePendingPayments();
+    
+    showToast('Proof submitted for verification!', 'success');
+    modalGcashPaymentBackdrop.style.display = 'none';
+};
+
+// --- Check for client auto-login ---
+function checkClientAutoLogin() {
+    const loggedInAccNum = localStorage.getItem(CLIENT_LOGIN_KEY);
+    if (loggedInAccNum) {
+        const acc = accounts.find(a => a.accountNumber === loggedInAccNum);
+        if (acc) {
+            // Logged in as client, bypass admin login check
+            document.getElementById('loginModalBackdrop').style.display = 'none';
+            showClientPortal(acc);
+            return true; // Client is logged in
+        } else {
+            localStorage.removeItem(CLIENT_LOGIN_KEY); // Invalid key
+        }
+    }
+    return false; // No client is logged in
+}
+
+/* =========================================== */
+/* END: NEW JS FOR CLIENT PORTAL & REGISTRATION */
+/* =========================================== */
+
+/* --- CALCULATOR LOGIC --- */
+document.getElementById('navBtnCalculator').onclick = () => {
+    document.getElementById('modalCalculatorBackdrop').style.display = 'flex';
+    clearActiveNav();
+    document.getElementById('navBtnCalculator').classList.add('active');
+};
+document.getElementById('closeCalculator').onclick = () => {
+    document.getElementById('modalCalculatorBackdrop').style.display = 'none';
+    clearActiveNav();
+};
+
+let calcExpr = "";
+function calcAppend(val) {
+    calcExpr += val;
+    document.getElementById('calcDisplay').value = calcExpr;
+}
+function calcClear() {
+    calcExpr = "";
+    document.getElementById('calcDisplay').value = "";
+}
+function calcEqual() {
+    try {
+        // Basic safety replacement
+        const safeExpr = calcExpr.replace(/[^0-9+\-*/.]/g, "");
+        if(!safeExpr) return;
+        const result = eval(safeExpr); 
+        document.getElementById('calcDisplay').value = result;
+        calcExpr = String(result);
+    } catch (e) {
+        document.getElementById('calcDisplay').value = "Error";
+        calcExpr = "";
+    }
+}
+
+/* --- EXTRA CHARGE LOGIC --- */
+document.getElementById('btnAddCharge').onclick = () => {
+    document.getElementById('chargeNote').value = '';
+    document.getElementById('chargeAmount').value = '';
+    document.getElementById('modalChargeBackdrop').style.display = 'flex';
+};
+document.getElementById('closeCharge').onclick = () => {
+    document.getElementById('modalChargeBackdrop').style.display = 'none';
+};
+
+document.getElementById('btnSaveCharge').onclick = () => {
+    if(activeAccountIndex === null) return;
+    const note = document.getElementById('chargeNote').value;
+    const amount = Number(document.getElementById('chargeAmount').value);
+    
+    if(!note || !amount) return showToast('Please enter description and amount', 'error');
+    
+    const acc = accounts[activeAccountIndex];
+    if(!acc.charges) acc.charges = [];
+    
+    acc.charges.push({
+        date: new Date().toISOString().slice(0,10),
+        note: note,
+        amount: amount
+    });
+    
+    recomputePointsAndBalance(acc);
+    saveAccounts();
+    document.getElementById('modalChargeBackdrop').style.display = 'none';
+    showToast('Extra charge added to account.', 'success');
+    openAccount(activeAccountIndex);
+};
+
+// 1. Logic to Open Calculator from Dashboard
+document.getElementById('dashBtnCalculator').onclick = () => {
+    // Close the dashboard first
+    document.getElementById('modalDashboardBackdrop').style.display = 'none';
+    
+    // Open the calculator
+    document.getElementById('modalCalculatorBackdrop').style.display = 'flex';
+};
+
+// 2. Logic to Close Calculator
+document.getElementById('closeCalculator').onclick = () => {
+    document.getElementById('modalCalculatorBackdrop').style.display = 'none';
+};
+
+// 3. Calculator Functional Logic
+
+
+// Function to add numbers/operators to screen
+window.calcAppend = function(val) {
+    calcExpr += val;
+    document.getElementById('calcDisplay').value = calcExpr;
+}
+
+// Function to clear screen
+window.calcClear = function() {
+    calcExpr = "";
+    document.getElementById('calcDisplay').value = "";
+}
+
+// Function to calculate result
+window.calcEqual = function() {
+    try {
+        // Remove invalid characters for security
+        const safeExpr = calcExpr.replace(/[^0-9+\-*/.]/g, "");
+        
+        if(!safeExpr) return;
+        
+        // Calculate
+        const result = eval(safeExpr); 
+        
+        // Update display
+        document.getElementById('calcDisplay').value = result;
+        calcExpr = String(result); // Store result for next operation
+    } catch (e) {
+        document.getElementById('calcDisplay').value = "Error";
+        calcExpr = "";
+    }
+}
+
+// --- DISCOUNT MODAL LOGIC ---
+document.getElementById('btnAddDiscount').onclick = () => {
+    document.getElementById('discountNote').value = '';
+    document.getElementById('discountAmount').value = '';
+    document.getElementById('modalDiscountBackdrop').style.display = 'flex';
+};
+document.getElementById('closeDiscount').onclick = () => {
+    document.getElementById('modalDiscountBackdrop').style.display = 'none';
+};
+
+document.getElementById('btnSaveDiscount').onclick = () => {
+    if(activeAccountIndex === null) return;
+    const note = document.getElementById('discountNote').value;
+    const amount = Number(document.getElementById('discountAmount').value);
+    
+    if(!note || !amount) return showToast('Please enter description and amount', 'error');
+    
+    const acc = accounts[activeAccountIndex];
+    if(!acc.discounts) acc.discounts = [];
+    
+    acc.discounts.push({
+        date: new Date().toISOString().slice(0,10),
+        note: note,
+        amount: amount,
+        ref: `DISC-${Date.now()}` // Requirement #3: Ref Number
+    });
+    
+    recomputePointsAndBalance(acc);
+    saveAccounts();
+    document.getElementById('modalDiscountBackdrop').style.display = 'none';
+    showToast('Discount applied successfully.', 'success');
+    openAccount(activeAccountIndex);
+};
+
+// ===========================================
+//  NEW: DOWNLOAD INVOICE AS PNG FUNCTION
+// ===========================================
+
+document.getElementById('btnDownloadInvoicePng').onclick = async () => {
+    if (activeAccountIndex === null) return showToast('Select an account.', 'warning');
+    const acc = accounts[activeAccountIndex];
+
+    // Ask type
+    const isReminder = await customConfirm(
+        "Generate Billing Statement (Total Due)?\nCancel for Payment Receipt.", 
+        "📄 Select Type"
+    );
+
+    // Generate content
+    const htmlContent = generateInvoiceHtml(acc, isReminder);
+    const printArea = document.getElementById('printArea');
+    const invoiceContainer = document.getElementById('invoiceContent');
+    
+    invoiceContainer.innerHTML = htmlContent;
+    
+    // Show temporarily for capture
+    printArea.style.display = 'block';
+    printArea.style.position = 'absolute';
+    printArea.style.left = '-9999px'; // Hide off screen
+
+    showToast('Rendering High-Res Invoice...', 'info');
+
+    // High Quality Capture
+    html2canvas(document.querySelector("#invoiceCapture"), {
+        scale: 3, // High Res
+        useCORS: true, 
+        backgroundColor: '#ffffff'
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL("image/png");
+        link.download = `INVOICE_${acc.name.replace(/\s+/g,'_')}_${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        printArea.style.display = 'none';
+        showToast('Invoice Downloaded!', 'success');
+    });
+};
+
+/* =========================================
+   NEW UNIFIED DELETE FUNCTION
+   Handles Payments, Charges, and Discounts
+   ========================================= */
+async function deleteTransaction(accIdx, type, itemIdx) {
+    const acc = accounts[accIdx];
+    let confirmMsg = '';
+
+    if(type === 'payment') confirmMsg = 'Delete this PAYMENT? This will recalculate balances.';
+    if(type === 'charge') confirmMsg = 'Remove this CHARGE? Balance will decrease (credit back).';
+    if(type === 'discount') confirmMsg = 'Remove this DISCOUNT? Balance will increase (debt).';
+
+    const shouldDelete = await customConfirm(confirmMsg, '⚠️ Delete Record');
+    if (!shouldDelete) return;
+
+    // Perform Deletion based on type
+    if(type === 'payment') {
+        acc.payments.splice(itemIdx, 1);
+    } 
+    else if(type === 'charge') {
+        acc.charges.splice(itemIdx, 1);
+    } 
+    else if(type === 'discount') {
+        acc.discounts.splice(itemIdx, 1);
+    }
+
+    // Recalculate everything
+    recomputePointsAndBalance(acc);
+    
+    // Update Next Due Date based on remaining payments
+    const lastPayDate = acc.payments.length > 0 ? acc.payments[acc.payments.length-1].date : null;
+    acc.nextDue = computeNextDue(lastPayDate, acc.billingDay);
+    
+    saveAccounts();
+    showToast(`${type.toUpperCase()} deleted successfully.`, 'success');
+    
+    // Refresh UI
+    renderAccounts();
+    if(activeAccountIndex === accIdx) openAccount(accIdx);
+}
+
+</script>
+</body>
+</html>
